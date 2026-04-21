@@ -1,0 +1,65 @@
+[
+  {
+    "id": "qing_tang",
+    "name": "清汤锅",
+    "emoji": "🥘",
+    "color": "#FFF5E6",
+    "boilTemp": 100,
+    "timeFactor": 1.0,
+    "description": "标准沸水，食材原味"
+  },
+  {
+    "id": "fan_qie",
+    "name": "番茄锅",
+    "emoji": "🍅",
+    "color": "#FF6347",
+    "boilTemp": 98,
+    "timeFactor": 1.05,
+    "description": "酸甜开胃，略低于沸点"
+  },
+  {
+    "id": "ma_la",
+    "name": "麻辣锅",
+    "emoji": "🌶️",
+    "color": "#C0392B",
+    "boilTemp": 105,
+    "timeFactor": 0.95,
+    "description": "油脂覆盖，温度略高"
+  },
+  {
+    "id": "niu_you",
+    "name": "牛油锅",
+    "emoji": "🔥",
+    "color": "#8B0000",
+    "boilTemp": 110,
+    "timeFactor": 0.9,
+    "description": "牛油浓郁，温度最高"
+  },
+  {
+    "id": "jun_gu",
+    "name": "菌菇锅",
+    "emoji": "🍄",
+    "color": "#D4A574",
+    "boilTemp": 100,
+    "timeFactor": 1.0,
+    "description": "清鲜滋补"
+  },
+  {
+    "id": "suan_cai",
+    "name": "酸菜锅",
+    "emoji": "🥬",
+    "color": "#F5DEB3",
+    "boilTemp": 100,
+    "timeFactor": 1.0,
+    "description": "东北酸爽"
+  },
+  {
+    "id": "yuan_yang",
+    "name": "鸳鸯锅",
+    "emoji": "☯️",
+    "color": "#8B0000",
+    "boilTemp": 105,
+    "timeFactor": 0.95,
+    "description": "一锅两味（按麻辣侧计算）"
+  }
+]
