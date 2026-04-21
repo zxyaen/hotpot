@@ -1,0 +1,108 @@
+<view class="container home-page">
+  <!-- 锅底选择 -->
+  <view class="pot-selector card" bindtap="onSelectPot">
+    <view class="pot-info" wx:if="{{currentPot}}">
+      <text class="pot-emoji">{{currentPot.emoji}}</text>
+      <view class="pot-text">
+        <view class="pot-name">{{currentPot.name}}</view>
+        <view class="pot-desc">{{currentPot.description}} · {{currentPot.boilTemp}}°C</view>
+      </view>
+    </view>
+    <view class="pot-info" wx:else>
+      <text class="pot-emoji">🥘</text>
+      <view class="pot-text">
+        <view class="pot-name">选择锅底</view>
+        <view class="pot-desc">不同锅底温度不同，影响涮煮时间</view>
+      </view>
+    </view>
+    <text class="arrow">›</text>
+  </view>
+
+  <!-- 状态栏 -->
+  <view class="status-bar">
+    <view class="status-item">
+      <text class="status-num">{{runningCount}}</text>
+      <text class="status-label">涮煮中</text>
+    </view>
+    <view class="status-divider"></view>
+    <view class="status-item">
+      <text class="status-num">{{timers.length}}</text>
+      <text class="status-label">总计时</text>
+    </view>
+  </view>
+
+  <!-- 计时器列表 -->
+  <view class="timer-list" wx:if="{{timers.length > 0}}">
+    <view class="timer-card {{item.statusClass}}" wx:for="{{timers}}" wx:key="id">
+      <view class="timer-header">
+        <view class="timer-food">
+          <text class="food-emoji">{{item.foodEmoji}}</text>
+          <view>
+            <view class="food-name">{{item.foodName}}</view>
+            <view class="food-meta">总时长 {{item.totalText}}</view>
+          </view>
+        </view>
+        <view class="timer-status {{item.statusClass}}">{{item.statusText}}</view>
+      </view>
+
+      <!-- 倒计时大字 -->
+      <view class="timer-countdown" wx:if="{{item.status === 'running' && !item.isOver}}">
+        {{item.remainingText}}
+      </view>
+      <view class="timer-countdown over" wx:elif="{{item.isOver}}">
+        🔔 到时了！
+      </view>
+      <view class="timer-countdown done" wx:else>
+        ✓
+      </view>
+
+      <!-- 进度条 -->
+      <view class="progress-bar" wx:if="{{item.status === 'running'}}">
+        <view class="progress-fill {{item.isOver ? 'over' : ''}}" style="width: {{item.progressPercent}}%"></view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="timer-actions">
+        <block wx:if="{{item.status === 'running' && !item.isOver}}">
+          <button class="btn-mini btn-cancel" data-id="{{item.id}}" bindtap="onCancelTimer">取消</button>
+        </block>
+        <block wx:elif="{{item.isOver}}">
+          <button class="btn-mini btn-confirm" data-id="{{item.id}}" bindtap="onConfirmDone">我已捞出</button>
+        </block>
+        <block wx:else>
+          <button class="btn-mini btn-remove" data-id="{{item.id}}" bindtap="onRemoveTimer">移除</button>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{timers.length === 0}}">
+    <view class="empty-emoji">🔥</view>
+    <view class="empty-title">准备开涮了吗？</view>
+    <view class="empty-desc">下完菜后点击下方按钮开始计时</view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-actions">
+    <button class="btn-primary btn-add" bindtap="onAddFood">
+      + 下菜开始计时
+    </button>
+    <view class="bottom-secondary" wx:if="{{timers.length > 0}}">
+      <text class="link" bindtap="onClearFinished">清除已完成</text>
+      <text class="link danger" bindtap="onClearAll">结束本次</text>
+    </view>
+  </view>
+
+  <!-- 到时提醒弹窗 -->
+  <view class="alert-mask" wx:if="{{showAlertModal}}" catchtap="onAlertClose">
+    <view class="alert-box" catchtap="">
+      <view class="alert-emoji-big">{{alertTimer.foodEmoji}}</view>
+      <view class="alert-title">{{alertTimer.foodName}} 好啦！</view>
+      <view class="alert-subtitle">🔔 快捞出来吧，别糊啦~</view>
+      <view class="alert-actions">
+        <button class="btn-primary" bindtap="onAlertConfirm">✓ 我已捞出</button>
+      </view>
+    </view>
+  </view>
+</view>

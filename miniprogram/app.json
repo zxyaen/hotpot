@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/foods/index",
+    "pages/pot/index",
+    "pages/room/index",
+    "pages/history/index",
+    "pages/settings/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#8B0000",
+    "navigationBarTitleText": "火锅计时助手",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#FFF5E6"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#C0392B",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "计时"
+      },
+      {
+        "pagePath": "pages/foods/index",
+        "text": "食材"
+      },
+      {
+        "pagePath": "pages/history/index",
+        "text": "历史"
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "text": "设置"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

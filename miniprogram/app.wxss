@@ -1,0 +1,116 @@
+/**
+ * 全局样式 - 火锅主题色
+ */
+
+page {
+  --primary-color: #C0392B;
+  --primary-dark: #8B0000;
+  --primary-light: #E74C3C;
+  --accent-color: #F39C12;
+  --bg-color: #FFF5E6;
+  --card-bg: #FFFFFF;
+  --text-primary: #2C3E50;
+  --text-secondary: #7F8C8D;
+  --text-light: #BDC3C7;
+  --success: #27AE60;
+  --warning: #F39C12;
+  --danger: #E74C3C;
+  --border-color: #ECF0F1;
+
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+/* 通用卡片 */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 主按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, #C0392B 0%, #8B0000 100%);
+  color: #fff;
+  border: none;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  padding: 20rpx 48rpx;
+}
+
+.btn-primary[disabled] {
+  opacity: 0.5;
+  background: #ccc;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--primary-color);
+  border: 2rpx solid var(--primary-color);
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  padding: 20rpx 48rpx;
+}
+
+/* 标题 */
+.page-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16rpx;
+}
+
+/* 文本样式 */
+.text-secondary {
+  color: var(--text-secondary);
+  font-size: 26rpx;
+}
+
+.text-light {
+  color: var(--text-light);
+  font-size: 24rpx;
+}
+
+/* 工具类 */
+.flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.mt-20 { margin-top: 20rpx; }
+.mt-40 { margin-top: 40rpx; }
+.mb-20 { margin-bottom: 20rpx; }
+.p-20 { padding: 20rpx; }
+.p-30 { padding: 30rpx; }
+
+.container {
+  padding: 30rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}

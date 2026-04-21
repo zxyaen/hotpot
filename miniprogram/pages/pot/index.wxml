@@ -1,0 +1,21 @@
+<view class="container pot-page">
+  <view class="page-title">选择锅底</view>
+  <view class="sub-title">不同锅底沸腾温度不同，会智能调整涮煮时间</view>
+
+  <view class="pot-grid">
+    <view
+      class="pot-card {{currentPotId === item.id ? 'active' : ''}}"
+      wx:for="{{pots}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onSelect"
+      style="--pot-color: {{item.color}}"
+    >
+      <view class="pot-emoji-big">{{item.emoji}}</view>
+      <view class="pot-name-big">{{item.name}}</view>
+      <view class="pot-desc">{{item.description}}</view>
+      <view class="pot-temp">🌡 {{item.boilTemp}}°C</view>
+      <view class="pot-check" wx:if="{{currentPotId === item.id}}">✓ 已选择</view>
+    </view>
+  </view>
+</view>

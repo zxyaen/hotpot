@@ -1,0 +1,48 @@
+<view class="container foods-page">
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索食材..."
+      value="{{searchText}}"
+      bindinput="onSearch"
+    />
+  </view>
+
+  <!-- 分类Tab -->
+  <scroll-view scroll-x="true" class="cat-scroll" enhanced="true" show-scrollbar="{{false}}">
+    <view class="cat-list">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="cat-item {{currentCategory === item ? 'active' : ''}}"
+        data-cat="{{item}}"
+        bindtap="onTapCategory"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 食材网格 -->
+  <view class="food-grid">
+    <view class="food-item" wx:for="{{foods}}" wx:key="id">
+      <view class="food-card" data-id="{{item.id}}" bindtap="onTapFood">
+        <text
+          class="fav-icon {{item.isFavorite ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          catchtap="onToggleFav"
+        >{{item.isFavorite ? '★' : '☆'}}</text>
+        <view class="food-emoji-big">{{item.emoji}}</view>
+        <view class="food-name">{{item.name}}</view>
+        <view class="food-time">⏱ {{item.recommendedText}}</view>
+        <view class="food-tips">{{item.tips}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{foods.length === 0}}">
+    <view class="empty-emoji">🔍</view>
+    <view>没有找到相关食材</view>
+  </view>
+
+  <view class="foods-tip">点击食材卡片立即开始计时</view>
+</view>

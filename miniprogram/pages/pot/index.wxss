@@ -1,0 +1,59 @@
+.pot-page {
+  padding: 30rpx;
+}
+.page-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #8B0000;
+  margin-bottom: 8rpx;
+}
+.sub-title {
+  font-size: 26rpx;
+  color: #7F8C8D;
+  margin-bottom: 30rpx;
+}
+.pot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+.pot-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx 20rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  border: 4rpx solid transparent;
+  transition: all 0.2s;
+}
+.pot-card.active {
+  border-color: var(--pot-color, #C0392B);
+  background: linear-gradient(135deg, #fff 0%, #FFF5E6 100%);
+  box-shadow: 0 4rpx 20rpx rgba(192, 57, 43, 0.2);
+}
+.pot-emoji-big {
+  font-size: 100rpx;
+  margin-bottom: 12rpx;
+}
+.pot-name-big {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+.pot-desc {
+  font-size: 24rpx;
+  color: #7F8C8D;
+  margin-top: 8rpx;
+  min-height: 36rpx;
+}
+.pot-temp {
+  font-size: 24rpx;
+  color: #C0392B;
+  margin-top: 12rpx;
+}
+.pot-check {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #27AE60;
+  font-weight: 600;
+}

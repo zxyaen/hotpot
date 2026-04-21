@@ -1,0 +1,26 @@
+<view class="container history-page">
+  <view class="page-header">
+    <view class="page-title">历史记录</view>
+    <view class="clear-btn" bindtap="onClearHistory" wx:if="{{records.length > 0}}">清空</view>
+  </view>
+
+  <view class="record-list" wx:if="{{records.length > 0}}">
+    <view class="record-card" wx:for="{{records}}" wx:key="id">
+      <view class="record-head">
+        <text class="record-date">{{item.dateText}}</text>
+        <text class="record-duration">🕐 {{item.durationMin}}分钟</text>
+      </view>
+      <view class="record-pot">🥘 {{item.potName}}</view>
+      <view class="record-foods">
+        <text class="record-foods-emoji">{{item.foodsText}}</text>
+        <text class="record-foods-count">共 {{item.foodCount}} 样</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <view class="empty-emoji">📜</view>
+    <view class="empty-title">还没有历史记录</view>
+    <view class="empty-desc">结束每次涮火锅后会自动保存</view>
+  </view>
+</view>

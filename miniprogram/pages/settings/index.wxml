@@ -1,0 +1,71 @@
+<view class="container settings-page">
+  <!-- 用户信息 -->
+  <view class="card">
+    <view class="section-title">🧑 我的信息</view>
+    <view class="row">
+      <text class="row-label">昵称</text>
+      <input class="row-input" value="{{nickname}}" bindinput="onNicknameInput" maxlength="8" placeholder="火锅达人" />
+    </view>
+    <view class="row">
+      <text class="row-label">头像</text>
+    </view>
+    <view class="avatar-list">
+      <view
+        wx:for="{{avatars}}"
+        wx:key="*this"
+        class="avatar-item {{avatar === item ? 'active' : ''}}"
+        data-avatar="{{item}}"
+        bindtap="onSelectAvatar"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 提醒 -->
+  <view class="card">
+    <view class="section-title">🔔 提醒设置</view>
+    <view class="row">
+      <text class="row-label">声音提醒</text>
+      <switch checked="{{soundEnabled}}" bindchange="onToggleSound" color="#C0392B" />
+    </view>
+    <view class="row">
+      <text class="row-label">震动提醒</text>
+      <switch checked="{{vibrateEnabled}}" bindchange="onToggleVibrate" color="#C0392B" />
+    </view>
+  </view>
+
+  <!-- 时间偏好 -->
+  <view class="card">
+    <view class="section-title">⏱ 时间偏好</view>
+    <view class="pref-list">
+      <view class="pref-item {{timePreference === 'min' ? 'active' : ''}}" data-pref="min" bindtap="onTimePrefChange">
+        <text class="pref-name">最短安全</text>
+        <text class="pref-desc">刚熟，口感最嫩</text>
+      </view>
+      <view class="pref-item {{timePreference === 'recommended' ? 'active' : ''}}" data-pref="recommended" bindtap="onTimePrefChange">
+        <text class="pref-name">推荐时间</text>
+        <text class="pref-desc">平衡最佳口感</text>
+      </view>
+      <view class="pref-item {{timePreference === 'max' ? 'active' : ''}}" data-pref="max" bindtap="onTimePrefChange">
+        <text class="pref-name">完全煮熟</text>
+        <text class="pref-desc">入味更安全</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 多人同步 -->
+  <view class="card">
+    <view class="section-title">👥 多人同步</view>
+    <view class="row">
+      <text class="row-label">后端地址</text>
+      <input class="row-input" value="{{serverHost}}" placeholder="https://your-server.com" bindinput="onServerHostInput" />
+    </view>
+    <view class="hint">仅在使用多人同桌功能时需要配置</view>
+    <button class="btn-secondary" bindtap="onGoToRoom">进入房间</button>
+  </view>
+
+  <!-- 关于 -->
+  <view class="card about-card" bindtap="onAbout">
+    <view class="row-label">关于本应用</view>
+    <text class="arrow">›</text>
+  </view>
+</view>
