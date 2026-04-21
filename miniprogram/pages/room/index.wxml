@@ -1,1 +1,210 @@
-<view class="container"><view class="placeholder">多人同步 (M3)</view></view>
+<!-- pages/room/index.wxml -->
+<view class="container">
+
+  <!-- ═══════════════ 大厅视图 ═══════════════ -->
+  <block wx:if="{{view === 'lobby'}}">
+    <view class="lobby-header">
+      <text class="lobby-title">🍲 同桌火锅</text>
+      <text class="lobby-subtitle">创建或加入房间，和朋友一起计时</text>
+    </view>
+
+    <!-- 昵称 & 头像 -->
+    <view class="card">
+      <text class="card-title">我的信息</text>
+      <view class="avatar-row">
+        <view
+          wx:for="{{AVATARS}}"
+          wx:key="index"
+          class="avatar-item {{avatar === item ? 'avatar-active' : ''}}"
+          data-emoji="{{item}}"
+          bindtap="onSelectAvatar"
+        >{{item}}</view>
+      </view>
+      <input
+        class="input"
+        placeholder="输入昵称（最多8字）"
+        maxlength="8"
+        value="{{nickname}}"
+        bindinput="onNicknameInput"
+      />
+    </view>
+
+    <!-- 创建房间 -->
+    <view class="card">
+      <text class="card-title">创建房间</text>
+      <text class="card-desc">你将成为房主，可以选择锅底并邀请朋友</text>
+      <button
+        class="btn btn-primary"
+        loading="{{connecting}}"
+        bindtap="onCreateRoom"
+      >🔥 创建房间</button>
+    </view>
+
+    <!-- 加入房间 -->
+    <view class="card">
+      <text class="card-title">加入房间</text>
+      <input
+        class="input input-code"
+        placeholder="输入4位房间码"
+        maxlength="6"
+        value="{{joinCode}}"
+        bindinput="onJoinCodeInput"
+      />
+      <button
+        class="btn btn-secondary"
+        loading="{{connecting}}"
+        bindtap="onJoinRoom"
+      >🚀 加入房间</button>
+    </view>
+
+    <!-- 服务器设置 -->
+    <view class="settings-toggle" bindtap="onToggleSettings">
+      <text>⚙️ 服务器设置</text>
+      <text class="arrow">{{showSettings ? '▲' : '▼'}}</text>
+    </view>
+    <view class="card settings-card" wx:if="{{showSettings}}">
+      <text class="card-title">WebSocket 服务器地址</text>
+      <input
+        class="input"
+        placeholder="ws://your-server:3000/ws"
+        value="{{wsUrl}}"
+        bindinput="onWsUrlInput"
+      />
+      <button class="btn btn-ghost" bindtap="onSaveSettings">保存</button>
+    </view>
+  </block>
+
+  <!-- ═══════════════ 房间视图 ═══════════════ -->
+  <block wx:if="{{view === 'room'}}">
+
+    <!-- 顶部状态栏 -->
+    <view class="room-header">
+      <view class="room-code-block">
+        <text class="room-label">房间码</text>
+        <text class="room-code" bindtap="onCopyCode">{{roomCode}} 📋</text>
+      </view>
+      <view class="room-pot-block">
+        <text class="pot-emoji">{{potEmoji}}</text>
+        <text class="pot-name">{{potName}}</text>
+        <text class="pot-change" wx:if="{{isHost}}" bindtap="onSelectPot">换</text>
+      </view>
+      <view class="ws-dot {{wsState}}"></view>
+    </view>
+
+    <!-- 成员列表 -->
+    <view class="members-row">
+      <view
+        wx:for="{{members}}"
+        wx:key="id"
+        class="member-item {{item.online ? '' : 'member-offline'}}"
+      >
+        <text class="member-avatar">{{item.avatar}}</text>
+        <text class="member-name">{{item.nickname}}{{item.isHost ? '👑' : ''}}</text>
+        <view class="member-dot {{item.online ? 'online' : 'offline'}}"></view>
+      </view>
+    </view>
+
+    <!-- 计时列表 -->
+    <view class="timer-section">
+      <view class="timer-section-header">
+        <text class="section-title">🍢 进行中 ({{runningCount}})</text>
+        <button class="btn-add" bindtap="onAddFood">+ 加食材</button>
+      </view>
+
+      <view wx:if="{{timers.length === 0}}" class="empty-tip">
+        <text>还没有食材在涮，点击「加食材」开始</text>
+      </view>
+
+      <view
+        wx:for="{{timers}}"
+        wx:key="id"
+        class="timer-card {{item.statusClass}} {{item.isOwn ? 'timer-own' : ''}}"
+      >
+        <!-- 进度条 -->
+        <view class="timer-progress" style="width:{{item.progressPercent}}%"></view>
+
+        <view class="timer-body">
+          <view class="timer-left">
+            <text class="timer-emoji">{{item.foodEmoji}}</text>
+            <view class="timer-info">
+              <text class="timer-name">{{item.foodName}}</text>
+              <text class="timer-owner">{{item.ownerAvatar}} {{item.ownerNickname}}</text>
+            </view>
+          </view>
+          <view class="timer-right">
+            <text class="timer-time {{item.isOver ? 'time-over' : ''}}">{{item.remainingText}}</text>
+            <text class="timer-status">{{item.statusText}}</text>
+          </view>
+        </view>
+
+        <!-- 操作按钮（自己的计时或已到时才显示） -->
+        <view class="timer-actions" wx:if="{{item.status === 'running' && (item.isOwn || isHost)}}">
+          <text class="action-btn action-done" data-id="{{item.id}}" bindtap="onCompleteTimer">✓ 捞起</text>
+          <text class="action-btn action-cancel" data-id="{{item.id}}" bindtap="onCancelTimer">✕ 取消</text>
+        </view>
+        <view class="timer-actions" wx:if="{{item.status !== 'running' && (item.isOwn || isHost)}}">
+          <text class="action-btn action-remove" data-id="{{item.id}}" bindtap="onRemoveTimer">🗑 移除</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 离开按钮 -->
+    <view class="leave-row">
+      <button class="btn btn-danger-ghost" bindtap="onLeaveRoom">离开房间</button>
+    </view>
+  </block>
+
+  <!-- ═══════════════ 食材选择弹窗 ═══════════════ -->
+  <view class="modal-mask" wx:if="{{showFoodModal}}" bindtap="onCloseFoodModal">
+    <view class="modal-box" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">选择食材</text>
+        <text class="modal-close" bindtap="onCloseFoodModal">✕</text>
+      </view>
+      <!-- 分类 tabs -->
+      <scroll-view class="cat-scroll" scroll-x>
+        <view class="cat-row">
+          <text
+            wx:for="{{categories}}"
+            wx:key="index"
+            class="cat-tag {{selectedCategory === item ? 'cat-active' : ''}}"
+            data-cat="{{item}}"
+            bindtap="onSelectFoodCategory"
+          >{{item}}</text>
+        </view>
+      </scroll-view>
+      <!-- 食材列表 -->
+      <scroll-view class="food-list" scroll-y>
+        <view
+          wx:for="{{foods}}"
+          wx:key="id"
+          wx:if="{{selectedCategory === '全部' || item.category === selectedCategory}}"
+          class="food-item"
+          data-id="{{item.id}}"
+          bindtap="onAddFoodTimer"
+        >
+          <text class="food-emoji">{{item.emoji}}</text>
+          <view class="food-detail">
+            <text class="food-name">{{item.name}}</text>
+            <text class="food-time">⏱ {{item.cookTime.recommended}}秒</text>
+          </view>
+          <text class="food-add">+</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- ═══════════════ 到时提醒弹窗 ═══════════════ -->
+  <view class="modal-mask alert-mask" wx:if="{{showAlertModal}}">
+    <view class="alert-box">
+      <text class="alert-emoji">{{alertTimer.foodEmoji}}</text>
+      <text class="alert-title">{{alertTimer.foodName}} 好了！</text>
+      <text class="alert-owner">{{alertTimer.ownerAvatar}} {{alertTimer.ownerNickname}} 的</text>
+      <view class="alert-btns">
+        <button class="btn btn-ghost" bindtap="onAlertClose">稍后</button>
+        <button class="btn btn-primary" bindtap="onAlertConfirm">✓ 已捞起</button>
+      </view>
+    </view>
+  </view>
+
+</view>

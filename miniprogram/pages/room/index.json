@@ -1,1 +1,6 @@
-{ "navigationBarTitleText": "多人同桌" }
+{
+  "navigationBarTitleText": "同桌火锅",
+  "navigationBarBackgroundColor": "#8b1a0a",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#1a0a00"
+}

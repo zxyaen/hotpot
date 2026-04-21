@@ -151,13 +151,17 @@ export class RoomManager {
   addTimer(
     code: string,
     memberId: string,
-    payload: { foodId: string; foodName: string; foodEmoji: string; duration: number }
+    payload: { foodId: string; foodName: string; foodEmoji: string; duration: number; startAt?: number }
   ): Timer | null {
     const room = this.rooms.get(code);
     if (!room || room.status !== 'active') return null;
 
     const member = room.members.get(memberId);
     if (!member) return null;
+
+    const serverNow = Date.now();
+    // 若客户端传了 startAt 且偏差在合理范围（±5s）内，则使用服务端时间；否则直接用服务端时间
+    const startAt = serverNow;
 
     const timer: Timer = {
       id: generateTimerId(),
@@ -167,7 +171,7 @@ export class RoomManager {
       ownerId: memberId,
       ownerNickname: member.nickname,
       ownerAvatar: member.avatar,
-      startAt: Date.now(),
+      startAt,
       duration: payload.duration,
       status: 'running',
     };
