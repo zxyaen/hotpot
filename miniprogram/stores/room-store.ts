@@ -3,9 +3,11 @@
  * 负责 WebSocket 连接管理 + 房间状态同步
  */
 
+import { WS_BASE } from '../utils/config';
+
 const WS_URL_KEY = 'ws_server_url';
-// 默认连接本机（开发阶段），生产环境改为部署地址
-const DEFAULT_WS_URL = 'ws://localhost:3000/ws';
+// 默认连接本机（开发阶段），生产环境在 utils/config.ts 中修改
+const DEFAULT_WS_URL = WS_BASE;
 
 type Listener = () => void;
 

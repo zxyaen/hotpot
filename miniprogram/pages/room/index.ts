@@ -1,6 +1,7 @@
 // pages/room/index.ts
 import { formatCountdown } from '../../utils/helpers';
 import { getPotById, adjustTimeByPot } from '../../utils/builtin-data';
+import { WS_BASE } from '../../utils/config';
 import type { RoomStore, RoomTimer, RoomMember } from '../../stores/room-store';
 
 const app = getApp<IAppOption>();
@@ -14,7 +15,7 @@ Page({
     nickname: '',
     avatar: '🍲',
     joinCode: '',                     // 加入时输入的房间码
-    wsUrl: 'ws://localhost:3000/ws', // 服务器地址
+    wsUrl: WS_BASE,                  // 服务器地址（从 utils/config.ts 读取）
     showSettings: false,             // 显示服务器地址设置
 
     // ── 连接状态 ──
