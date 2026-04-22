@@ -94,7 +94,12 @@ export default function Home() {
   }
 
   async function handleCancelTimer(id: string) {
-    const ok = await confirm('取消计时', '确定要取消这个计时吗？');
+    const item = sortedTimersView.find(t => t.id === id);
+    const ok = await confirm(
+      `取消 ${item?.foodName || ''} 的计时？`,
+      '已计时的进度将丢失',
+      { icon: item?.foodEmoji || '⏱', confirmText: '确认取消', cancelText: '手滑了' }
+    );
     if (ok) {
       timerStore.cancelTimer(id);
     }
@@ -242,9 +247,14 @@ export default function Home() {
                 {!batchMode && (
                   <div className="timer-actions">
                     {item.status === 'running' && !item.isOver ? (
-                      <button className="btn-mini btn-cancel" onClick={e => { e.stopPropagation(); handleCancelTimer(item.id); }}>
-                        取消
-                      </button>
+                      <>
+                        <button className="btn-mini btn-ladle" onClick={e => { e.stopPropagation(); timerStore.completeTimer(item.id); }}>
+                          🥢 捞出
+                        </button>
+                        <button className="btn-mini btn-cancel" onClick={e => { e.stopPropagation(); handleCancelTimer(item.id); }}>
+                          取消
+                        </button>
+                      </>
                     ) : item.isOver ? (
                       <button className="btn-mini btn-confirm" onClick={e => { e.stopPropagation(); timerStore.completeTimer(item.id); }}>
                         ✓ 我已捞出
@@ -323,6 +333,7 @@ export default function Home() {
 
 function PotList({ onClose }: { onClose: () => void }) {
   const { timerStore } = useApp();
+  const pots = getAllPots();
   const [, forceUpdate] = useState(0);
   useEffect(() => {
     const unsub = timerStore.subscribe(() => forceUpdate(n => n + 1));
@@ -335,7 +346,7 @@ function PotList({ onClose }: { onClose: () => void }) {
         <span className="popup-close" onClick={onClose}>✕</span>
       </div>
       <div className="pot-list">
-        {pots.map(p => (
+        {pots.map((p: ReturnType<typeof getAllPots>[number]) => (
           <div
             key={p.id}
             className={`pot-item ${timerStore.currentPotId === p.id ? 'active' : ''}`}

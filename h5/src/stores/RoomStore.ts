@@ -4,8 +4,6 @@
  */
 import { RoomState, RoomMember, RoomTimer, WsState } from '../types';
 import { WS_BASE } from '../utils/config';
-
-const WS_URL_KEY = 'hotpot_ws_url';
 type Listener = () => void;
 
 export class RoomStore {
@@ -59,15 +57,11 @@ export class RoomStore {
   }
 
   getWsUrl(): string {
-    try {
-      const saved = localStorage.getItem(WS_URL_KEY);
-      if (saved) return saved;
-    } catch {}
     return WS_BASE;
   }
 
-  setWsUrl(url: string) {
-    try { localStorage.setItem(WS_URL_KEY, url); } catch {}
+  setWsUrl(_url: string) {
+    // 已弃用，不再支持自定义wsUrl
   }
 
   connect(): Promise<void> {

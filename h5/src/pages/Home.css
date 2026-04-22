@@ -79,7 +79,7 @@
 
 .timer-card {
   background: #fff; border-radius: 14px;
-  padding: 14px 14px 10px;
+  padding: 10px 12px 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   border-left: 5px solid #95A5A6;
   position: relative; overflow: hidden;
@@ -100,11 +100,11 @@
   75% { transform: translateX(2px); }
 }
 
-.timer-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.timer-food { display: flex; align-items: center; flex: 1; min-width: 0; gap: 10px; }
-.food-emoji { font-size: 30px; flex-shrink: 0; }
-.food-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.food-name { font-size: 17px; font-weight: 700; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.timer-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.timer-food { display: flex; align-items: center; flex: 1; min-width: 0; gap: 8px; }
+.food-emoji { font-size: 26px; flex-shrink: 0; }
+.food-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.food-name { font-size: 15px; font-weight: 700; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .status-tag {
   display: inline-block; font-size: 11px; font-weight: 600;
@@ -120,7 +120,7 @@
 .status-tag.status-cancelled { background: #F2F3F4; color: #95A5A6; }
 
 .timer-countdown {
-  font-size: 36px; font-weight: 800;
+  font-size: 30px; font-weight: 800;
   font-variant-numeric: tabular-nums; letter-spacing: -1px;
   flex-shrink: 0; margin-left: 8px;
   color: #95A5A6;
@@ -146,16 +146,17 @@
 .progress-fill.urgency-warn { background: #27AE60; }
 .progress-fill.status-over  { background: #E74C3C; }
 
-.timer-meta { margin-bottom: 8px; }
-.meta-text { font-size: 12px; color: var(--color-text-sub); }
-.meta-over { font-size: 12px; color: #E74C3C; font-weight: 500; }
+.timer-meta { margin-bottom: 6px; }
+.meta-text { font-size: 11px; color: var(--color-text-sub); }
+.meta-over { font-size: 11px; color: #E74C3C; font-weight: 500; }
 
-.timer-actions { display: flex; justify-content: flex-end; }
+.timer-actions { display: flex; justify-content: flex-end; gap: 8px; }
 .btn-mini {
-  font-size: 13px; padding: 6px 16px; border-radius: 18px;
+  font-size: 12px; padding: 5px 14px; border-radius: 16px;
   border: none; cursor: pointer; font-weight: 500;
 }
-.btn-cancel { background: #F5F5F5; color: var(--color-text-sub); }
+.btn-ladle { background: linear-gradient(135deg, #27AE60, #1E8449); color: #fff; font-weight: 600; }
+.btn-cancel { background: #F5F5F5; color: #999; border: 1px solid #E8E8E8 !important; }
 .btn-confirm { background: linear-gradient(135deg, #2ECC71, #27AE60); color: #fff; font-weight: 700; }
 .btn-remove { background: transparent; color: #BDC3C7; border: 1px solid #E8E8E8 !important; }
 

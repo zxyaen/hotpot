@@ -126,7 +126,12 @@ export default function Room() {
   }
 
   async function handleCancelTimer(id: string) {
-    const ok = await confirm('取消计时', '确认取消这个计时？');
+    const item = timersView.find(t => t.id === id);
+    const ok = await confirm(
+      `取消 ${item?.foodName || ''} 的计时？`,
+      '已计时的进度将丢失',
+      { icon: item?.foodEmoji || '⏱', confirmText: '确认取消', cancelText: '手滑了' }
+    );
     if (ok) roomStore.updateTimer(id, 'cancelled');
   }
 

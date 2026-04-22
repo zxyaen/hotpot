@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--color-bg);
+  background: #F7F3EE;
   overflow: hidden;
   position: relative;
 }
@@ -16,10 +16,7 @@
 .foods-sticky-top {
   flex-shrink: 0;
   background: #fff;
-  border-bottom: 1px solid var(--color-border);
   z-index: 10;
-  position: sticky;
-  top: 0;
 }
 
 .foods-search {
@@ -27,20 +24,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid var(--color-border);
+  background: #fff;
+  border-bottom: 1px solid #F0F0F0;
 }
-.search-icon { font-size: 16px; flex-shrink: 0; }
+.search-icon { font-size: 15px; color: #BDC3C7; flex-shrink: 0; }
 .search-input {
   flex: 1;
   border: none;
   outline: none;
   font-size: 15px;
   background: transparent;
-  color: var(--color-text);
+  color: #1a1a1a;
   min-width: 0;
   line-height: 1.5;
 }
-.search-input::placeholder { color: #BDC3C7; }
+.search-input::placeholder { color: #C8C8C8; }
 .search-clear {
   font-size: 14px;
   color: #BDC3C7;
@@ -49,31 +47,37 @@
   flex-shrink: 0;
 }
 
+/* 分类横滑 */
 .foods-cats {
   overflow-x: auto;
-  padding: 10px 12px;
+  padding: 10px 12px 8px;
   -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border-bottom: 1px solid #F0F0F0;
 }
 .foods-cat-row { display: flex; gap: 8px; white-space: nowrap; }
 .cat-chip {
   display: inline-block;
-  padding: 6px 14px;
-  border-radius: 18px;
+  padding: 6px 16px;
+  border-radius: 20px;
   font-size: 13px;
-  color: #666;
+  color: #555;
   background: #F5F5F5;
-  border: 1px solid #EBEBEB;
+  border: 1.5px solid transparent;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
+  font-weight: 500;
+  transition: all 0.15s;
 }
 .cat-chip.active {
-  background: var(--color-primary);
+  background: #C0392B;
   color: #fff;
-  border-color: var(--color-primary);
+  border-color: #C0392B;
+  box-shadow: 0 2px 8px rgba(192,57,43,0.30);
 }
 
-/* ===== 可滚动食材列表（3列网格） ===== */
+/* ===== 3列网格 ===== */
 .foods-scroll-body {
   flex: 1;
   overflow-y: auto;
@@ -82,68 +86,84 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: #e8e8e8;
+  background: #EAEAEA;
   align-content: start;
-  padding-bottom: 20px;
+  padding-bottom: 16px;
 }
 
+/* 食材卡片 */
 .food-card {
   background: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 14px 8px 12px;
+  padding: 16px 8px 13px;
   gap: 5px;
   cursor: pointer;
-  min-height: 90px;
-  transition: background 0.15s;
+  min-height: 96px;
+  position: relative;
+  transition: background 0.15s, transform 0.12s;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
-.food-card:active { background: #FFF0EE; }
+.food-card:active {
+  background: #FFF0EE;
+  transform: scale(0.95);
+}
+.food-card-added {
+  background: #FFF0EE;
+  transform: scale(0.95);
+}
 
-.food-card-emoji { font-size: 30px; line-height: 1; }
+/* 选中对勾 */
+.food-card-check {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 13px;
+  color: #fff;
+  background: #27AE60;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  line-height: 1;
+  animation: checkIn 0.2s ease;
+}
+@keyframes checkIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.food-card-emoji {
+  font-size: 32px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+}
 .food-card-name {
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-text);
+  color: #1a1a1a;
   text-align: center;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.food-card-cat {
-  display: inline-block;
-  font-size: 10px;
-  color: var(--color-primary);
-  background: var(--color-primary-light);
-  padding: 1px 6px;
-  border-radius: 6px;
-}
-.food-card-right { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .food-card-time {
   font-size: 12px;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-.btn-time {
-  background: linear-gradient(135deg, #E8432D, #C0392B);
-  color: #fff;
-  border: none;
-  border-radius: 14px;
-  font-size: 12px;
   font-weight: 600;
-  padding: 5px 14px;
-  cursor: pointer;
+  color: #C0392B;
 }
-
-.food-card-tips { display: none; }
 
 .foods-empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 40px;
-  color: var(--color-text-sub);
+  padding: 60px 20px;
+  color: #BDC3C7;
   font-size: 14px;
 }

@@ -2,7 +2,7 @@
  * AppContext - 全局状态管理
  * 将 TimerStore 和 RoomStore 注入 React Context
  */
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { TimerStore } from '../stores/TimerStore';
 import { RoomStore } from '../stores/RoomStore';
 import { Tab } from '../types';
@@ -20,6 +20,8 @@ const AppContext = createContext<AppContextValue | null>(null);
 // 全局单例
 const timerStoreInstance = new TimerStore();
 const roomStoreInstance = new RoomStore();
+// 清除旧版本遗留的自定义wsUrl，避免连接到错误地址
+try { localStorage.removeItem('hotpot_ws_url'); } catch {}
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [tick, setTick] = useState(0);
