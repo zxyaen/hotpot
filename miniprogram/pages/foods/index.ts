@@ -31,6 +31,7 @@ Page({
   filter() {
     const settingStore: SettingStore = app.globalData.settingStore;
     const timerStore: TimerStore = app.globalData.timerStore;
+    if (!settingStore || !timerStore) return;
     const potId = timerStore.currentPotId;
 
     let list = this.allFoods;

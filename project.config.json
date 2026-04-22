@@ -11,7 +11,7 @@
     "enhance": true,
     "postcss": true,
     "preloadBackgroundData": false,
-    "minified": true,
+    "minified": false,
     "newFeature": false,
     "coverView": true,
     "nodeModules": false,
@@ -42,7 +42,7 @@
     "useCompilerPlugins": ["typescript"]
   },
   "compileType": "miniprogram",
-  "libVersion": "3.5.0",
+  "libVersion": "3.7.12",
   "appid": "wxf304d22adf6f7892",
   "projectname": "hotpot-timer",
   "condition": {},

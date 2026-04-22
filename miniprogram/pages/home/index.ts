@@ -18,6 +18,7 @@ Page({
 
   onLoad() {
     const store: TimerStore = app.globalData.timerStore;
+    if (!store) return;
     // 到时提醒回调
     store.onTimerEnd((timer) => {
       this.setData({
@@ -40,6 +41,7 @@ Page({
 
   refresh() {
     const store: TimerStore = app.globalData.timerStore;
+    if (!store) return;
     const pot = store.currentPotId ? getPotById(store.currentPotId) : null;
 
     const timersView = store.timers.map((t) => {
