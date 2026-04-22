@@ -265,7 +265,6 @@ Page({
     const duration = adjustTimeByPot(food.cookTime.recommended, potId);
 
     store.addTimer(food.id, food.name, food.emoji, duration);
-    this.setData({ showFoodModal: false });
     wx.showToast({ title: `${food.emoji} 已开始计时`, icon: 'none' });
   },
 
