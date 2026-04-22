@@ -9,14 +9,20 @@
   height: 100%;
   background: var(--color-bg);
   overflow: hidden;
+  position: relative;
 }
 
 /* ===== 固定顶部区域 ===== */
 .home-sticky-top {
-  flex-shrink: 0;
+  position: fixed;
+  top: calc(var(--header-h, 52px) + var(--safe-top, 0px));
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
   background: var(--color-bg);
   padding: 12px 14px 0;
-  z-index: 10;
+  z-index: 20;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
@@ -55,6 +61,9 @@
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding: 4px 14px 130px;
+  /* 为fixed的sticky-top留出空间（锅底卡片~56px + 状态栏~54px + padding = 约140px） */
+  padding-top: 148px;
+  margin-top: 0;
 }
 
 /* 批量工具栏 */

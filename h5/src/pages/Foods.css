@@ -14,9 +14,15 @@
 
 /* ===== 固定顶部 ===== */
 .foods-sticky-top {
-  flex-shrink: 0;
+  position: fixed;
+  top: calc(var(--header-h, 52px) + var(--safe-top, 0px));
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
   background: #fff;
-  z-index: 10;
+  z-index: 20;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .foods-search {
@@ -85,15 +91,17 @@
   -webkit-overflow-scrolling: touch;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: #EAEAEA;
+  gap: 8px;
+  background: #F7F3EE;
   align-content: start;
-  padding-bottom: 16px;
+  /* 为fixed的sticky-top留出空间（搜索~46px + 分类~50px + padding = 约116px） */
+  padding: 116px 8px 20px;
 }
 
 /* 食材卡片 */
 .food-card {
   background: #fff;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,6 +114,7 @@
   transition: background 0.15s, transform 0.12s;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .food-card:active {
   background: #FFF0EE;
