@@ -57,8 +57,14 @@ Page({
     list = [...list].sort((a, b) => b.popularity - a.popularity);
 
     // 视图层数据
+    const timePreference = settingStore ? settingStore.settings.timePreference : 'recommended';
     const foods = list.map(f => {
-      const adjusted = adjustTimeByPot(f.cookTime.recommended, potId);
+      // 根据时间偏好选择基础时间
+      let baseTime: number;
+      if (timePreference === 'min') baseTime = f.cookTime.min;
+      else if (timePreference === 'max') baseTime = f.cookTime.max;
+      else baseTime = f.cookTime.recommended;
+      const adjusted = adjustTimeByPot(baseTime, potId);
       return {
         ...f,
         recommendedText: formatDuration(adjusted),
@@ -82,10 +88,12 @@ Page({
   onTapFood(e: any) {
     const id = e.currentTarget.dataset.id;
     const timerStore: TimerStore = app.globalData.timerStore;
+    const settingStore: SettingStore = app.globalData.settingStore;
     const food = this.allFoods.find(f => f.id === id);
     if (!food) return;
 
-    const timer = timerStore.addTimer(id);
+    const timePreference = settingStore ? settingStore.settings.timePreference : 'recommended';
+    const timer = timerStore.addTimer(id, timePreference);
     if (timer) {
       wx.showToast({
         title: `${food.emoji} ${food.name} 开始计时`,

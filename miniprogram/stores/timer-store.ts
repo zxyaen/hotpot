@@ -4,7 +4,7 @@
  */
 
 import { uuid, playAlert } from '../utils/helpers';
-import { getFoodById, adjustTimeByPot } from '../utils/builtin-data';
+import { getFoodById, getPotById, adjustTimeByPot } from '../utils/builtin-data';
 
 const STORAGE_KEY = 'timer_store_v1';
 const HISTORY_KEY = 'timer_history_v1';
@@ -55,9 +55,9 @@ export class TimerStore {
   }
 
   /**
-   * 添加计时（会根据锅底自动调整时间）
+   * 添加计时（会根据锅底和时间偏好自动调整时间）
    */
-  addTimer(foodId: string, customDuration?: number): TimerItem | null {
+  addTimer(foodId: string, timePreference: 'min' | 'recommended' | 'max' = 'recommended', customDuration?: number): TimerItem | null {
     if (this.runningCount >= MAX_TIMERS) {
       wx.showToast({ title: '同时最多计时8个', icon: 'none' });
       return null;
@@ -65,8 +65,17 @@ export class TimerStore {
     const food = getFoodById(foodId);
     if (!food) return null;
 
-    const baseDuration = customDuration ?? food.cookTime.recommended;
-    const duration = adjustTimeByPot(baseDuration, this.currentPotId);
+    // 根据时间偏好选择基础时间
+    let baseTime: number;
+    if (customDuration !== undefined) {
+      baseTime = customDuration;
+    } else {
+      if (timePreference === 'min') baseTime = food.cookTime.min;
+      else if (timePreference === 'max') baseTime = food.cookTime.max;
+      else baseTime = food.cookTime.recommended;
+    }
+
+    const duration = adjustTimeByPot(baseTime, this.currentPotId);
 
     const timer: TimerItem = {
       id: uuid(),
@@ -215,11 +224,12 @@ export class TimerStore {
     if (doneList.length === 0) return;
 
     const firstStartAt = Math.min(...this.timers.map(t => t.startAt));
+    const pot = this.currentPotId ? getPotById(this.currentPotId) : null;
     const record: HistoryRecord = {
       id: uuid(),
       date: Date.now(),
       potId: this.currentPotId || '',
-      potName: this.currentPotId || '未选择',
+      potName: pot ? pot.name : '未选择锅底',
       foodCount: this.timers.length,
       durationMin: Math.round((Date.now() - firstStartAt) / 60000),
       foods: this.timers.map(t => ({ foodName: t.foodName, foodEmoji: t.foodEmoji })),
