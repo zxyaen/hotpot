@@ -31,6 +31,22 @@ App<IAppOption>({
   },
 
   fetchRemoteData() {
+    let foodsLoaded = false;
+    let potsLoaded = false;
+
+    const notifyPagesIfReady = () => {
+      if (foodsLoaded && potsLoaded) {
+        // 两个数据都加载完毕，通知各页面刷新
+        const pages = getCurrentPages();
+        pages.forEach((page: any) => {
+          if (typeof page.onRemoteDataLoaded === 'function') {
+            page.onRemoteDataLoaded();
+          }
+        });
+        console.log('🔄 远端数据全部加载完成，通知页面刷新');
+      }
+    };
+
     // 拉取食材
     wx.request({
       url: `${API_BASE}/api/foods`,
@@ -39,8 +55,14 @@ App<IAppOption>({
           updateFoods(res.data.foods);
           console.log(`✅ 远端食材加载完成: ${res.data.total} 条`);
         }
+        foodsLoaded = true;
+        notifyPagesIfReady();
       },
-      fail: () => console.warn('⚠️ 食材数据拉取失败，使用内置数据'),
+      fail: () => {
+        console.warn('⚠️ 食材数据拉取失败，使用内置数据');
+        foodsLoaded = true;
+        notifyPagesIfReady();
+      },
     });
     // 拉取锅底
     wx.request({
@@ -50,8 +72,14 @@ App<IAppOption>({
           updatePots(res.data.pots);
           console.log(`✅ 远端锅底加载完成: ${res.data.total} 条`);
         }
+        potsLoaded = true;
+        notifyPagesIfReady();
       },
-      fail: () => console.warn('⚠️ 锅底数据拉取失败，使用内置数据'),
+      fail: () => {
+        console.warn('⚠️ 锅底数据拉取失败，使用内置数据');
+        potsLoaded = true;
+        notifyPagesIfReady();
+      },
     });
   },
 

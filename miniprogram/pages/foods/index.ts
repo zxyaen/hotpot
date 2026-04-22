@@ -19,11 +19,12 @@ Page({
 
   onLoad() {
     const categories = ['全部', '⭐ 收藏', ...getCategories()];
-    this.allFoods = getAllFoods();
     this.setData({ categories });
     this.filter();
-    // 兜底：100ms 后再刷新一次，确保 App store 已初始化
-    setTimeout(() => this.filter(), 100);
+    // 远端数据是异步拉取的，延迟多次刷新确保数据到位
+    setTimeout(() => this.filter(), 500);
+    setTimeout(() => this.filter(), 1500);
+    setTimeout(() => this.filter(), 3000);
   },
 
   onShow() {
@@ -35,6 +36,8 @@ Page({
     const timerStore: TimerStore = app.globalData.timerStore;
     const potId = timerStore ? timerStore.currentPotId : null;
 
+    // 每次filter都重新获取最新数据（兼容远端异步更新）
+    this.allFoods = getAllFoods();
     let list = this.allFoods;
 
     // 分类过滤
@@ -102,5 +105,10 @@ Page({
 
   onBack() {
     wx.switchTab({ url: '/pages/home/index' });
+  },
+
+  /** 远端数据加载完成时触发（由 app.ts fetchRemoteData 回调） */
+  onRemoteDataLoaded() {
+    this.filter();
   },
 });
