@@ -19,40 +19,45 @@ export default function Foods() {
   });
 
   function handleAdd(foodId: string) {
-    const timer = timerStore.addTimer(foodId);
+    const result = timerStore.addTimer(foodId);
+    if (result === null) {
+      toast('同时最多计时8个');
+      return;
+    }
     const food = foods.find(f => f.id === foodId);
-    if (timer && food) toast(`${food.emoji} ${food.name} 开始计时`);
+    if (food) toast(`${food.emoji} ${food.name} 开始计时`);
   }
 
   return (
     <div className="foods-page">
-      {/* 搜索框 */}
-      <div className="foods-search">
-        <span className="search-icon">🔍</span>
-        <input
-          className="search-input"
-          placeholder="搜索食材..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        {search && <span className="search-clear" onClick={() => setSearch('')}>✕</span>}
-      </div>
+      {/* 固定顶部：搜索 + 分类 */}
+      <div className="foods-sticky-top">
+        <div className="foods-search">
+          <span className="search-icon">🔍</span>
+          <input
+            className="search-input"
+            placeholder="搜索食材..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && <span className="search-clear" onClick={() => setSearch('')}>✕</span>}
+        </div>
 
-      {/* 分类 */}
-      <div className="foods-cats">
-        <div className="foods-cat-row">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              className={`cat-chip ${category === cat ? 'active' : ''}`}
-              onClick={() => setCategory(cat)}
-            >{cat}</button>
-          ))}
+        <div className="foods-cats">
+          <div className="foods-cat-row">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                className={`cat-chip ${category === cat ? 'active' : ''}`}
+                onClick={() => setCategory(cat)}
+              >{cat}</button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* 食材列表 */}
-      <div className="foods-list">
+      {/* 可滚动食材列表 */}
+      <div className="foods-scroll-body">
         {filtered.map(food => (
           <div key={food.id} className="food-card">
             <span className="food-card-emoji">{food.emoji}</span>

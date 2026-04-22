@@ -14,6 +14,7 @@ export default function Room() {
   const { roomStore } = useApp();
   const [, forceUpdate] = useState(0);
   const [nickname, setNickname] = useState(() => localStorage.getItem('room_nickname') || '');
+  // 头像同时存本地，初始取存储值
   const [avatar, setAvatar] = useState(() => localStorage.getItem('room_avatar') || '🍲');
   const [joinCode, setJoinCode] = useState('');
   const [connecting, setConnecting] = useState(false);
@@ -21,8 +22,6 @@ export default function Room() {
   const [showPotModal, setShowPotModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [alertTimer, setAlertTimer] = useState<RoomTimer | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [wsUrl, setWsUrl] = useState(() => roomStore.getWsUrl());
 
   useEffect(() => {
     const unsub1 = roomStore.subscribe(() => forceUpdate(n => n + 1));
@@ -52,13 +51,19 @@ export default function Room() {
         t.status === 'done' ? '已完成' :
         t.status === 'cancelled' ? '已取消' :
         isOver ? '到时了' :
-        remaining > total * 0.4 ? '最佳口感' : '还差一点',
+        remaining > total * 0.4 ? '慢慢来' : '快好了',
       statusClass:
         t.status === 'done' ? 'status-done' :
         t.status === 'cancelled' ? 'status-cancelled' :
         isOver ? 'status-over' : 'status-running',
     };
   });
+
+  // 选择头像时同步保存
+  function handleSelectAvatar(em: string) {
+    setAvatar(em);
+    localStorage.setItem('room_avatar', em);
+  }
 
   async function handleCreate() {
     if (!nickname.trim()) { toast('请输入昵称'); return; }
@@ -68,29 +73,29 @@ export default function Room() {
     localStorage.setItem('room_avatar', avatar);
     try {
       await roomStore.createRoom(nickname.trim(), avatar);
+      closeToast();
     } catch (e: any) {
       closeToast();
-      toast(e.message || '创建失败');
+      toast(e.message || '创建失败，请检查网络');
     } finally {
-      closeToast();
       setConnecting(false);
     }
   }
 
   async function handleJoin() {
     if (!nickname.trim()) { toast('请输入昵称'); return; }
-    if (joinCode.length < 4) { toast('请输入4位房间码'); return; }
+    if (joinCode.length < 4) { toast('请输入完整的4位房间码'); return; }
     setConnecting(true);
     toastLoading('加入中...');
     localStorage.setItem('room_nickname', nickname);
     localStorage.setItem('room_avatar', avatar);
     try {
       await roomStore.joinRoom(joinCode.trim(), nickname.trim(), avatar);
+      closeToast();
     } catch (e: any) {
       closeToast();
-      toast(e.message || '加入失败');
+      toast(e.message || '加入失败，请检查房间码');
     } finally {
-      closeToast();
       setConnecting(false);
     }
   }
@@ -125,16 +130,11 @@ export default function Room() {
   if (!isInRoom) {
     return (
       <div className="room-lobby">
-        <div className="lobby-hero">
-          <span className="hero-icon">🍜</span>
-          <span className="hero-title">多人同桌同步</span>
-          <span className="hero-subtitle">同桌朋友都能看到同一锅的所有食材计时，一起吃最完美！</span>
-        </div>
-
         {/* 我的信息 */}
         <div className="lobby-card">
           <div className="lobby-card-head">
-            <div className="lobby-card-icon">👤</div>
+            {/* 选中的头像大图展示 */}
+            <div className="lobby-avatar-preview">{avatar}</div>
             <div>
               <div className="lobby-card-title">我的信息</div>
               <div className="lobby-card-desc">选个头像，设置昵称</div>
@@ -145,7 +145,7 @@ export default function Room() {
               <button
                 key={em}
                 className={`avatar-btn ${avatar === em ? 'active' : ''}`}
-                onClick={() => setAvatar(em)}
+                onClick={() => handleSelectAvatar(em)}
               >{em}</button>
             ))}
           </div>
@@ -168,7 +168,7 @@ export default function Room() {
             </div>
           </div>
           <button className="btn-create" disabled={connecting} onClick={handleCreate}>
-            🔥 创建房间
+            {connecting ? '连接中...' : '🔥 创建房间'}
           </button>
         </div>
 
@@ -184,13 +184,15 @@ export default function Room() {
           <div className="join-row">
             <input
               className="lobby-input code-input"
-              placeholder="输入房间码"
+              placeholder="_ _ _ _"
               maxLength={4}
               value={joinCode}
               inputMode="numeric"
               onChange={e => setJoinCode(e.target.value.replace(/\D/g, ''))}
             />
-            <button className="btn-join" disabled={connecting} onClick={handleJoin}>加入</button>
+            <button className="btn-join" disabled={connecting} onClick={handleJoin}>
+              {connecting ? '...' : '加入'}
+            </button>
           </div>
         </div>
 
@@ -210,26 +212,7 @@ export default function Room() {
           ))}
         </div>
 
-        {/* 服务器设置 */}
-        <div className="settings-toggle" onClick={() => setShowSettings(v => !v)}>
-          <span>⚙️ 服务器设置</span>
-          <span>{showSettings ? '▲' : '▼'}</span>
-        </div>
-        {showSettings && (
-          <div className="lobby-card">
-            <div className="lobby-card-title" style={{ marginBottom: 10 }}>WebSocket 服务器地址</div>
-            <input
-              className="lobby-input"
-              placeholder="wss://your-server/ws"
-              value={wsUrl}
-              onChange={e => setWsUrl(e.target.value)}
-            />
-            <button
-              className="btn-ghost-sm"
-              onClick={() => { roomStore.setWsUrl(wsUrl); setShowSettings(false); toastSuccess('已保存'); }}
-            >保存</button>
-          </div>
-        )}
+        {/* 服务器设置已隐藏，不对用户开放 */}
       </div>
     );
   }
@@ -245,12 +228,12 @@ export default function Room() {
         </div>
         <div className="room-pot-block">
           <span className="rph-pot-emoji">{pot?.emoji || '🍲'}</span>
-          <span className="rph-pot-name">{pot?.name || '未选择'}</span>
+          <span className="rph-pot-name">{pot?.name || '未选锅底'}</span>
           {roomStore.isHost && (
             <span className="pot-change-btn" onClick={() => setShowPotModal(true)}>换</span>
           )}
         </div>
-        <div className={`ws-dot ${roomStore.wsState}`} />
+        <div className={`ws-dot ${roomStore.wsState}`} title={roomStore.wsState} />
       </div>
 
       {/* 成员栏 */}
@@ -258,7 +241,7 @@ export default function Room() {
         {roomStore.members.map(m => (
           <div key={m.id} className={`member-item ${m.online ? '' : 'offline'}`}>
             <span className="member-avatar">{m.avatar}</span>
-            <span className="member-name">{m.nickname}{m.isHost ? '👑' : ''}</span>
+            <span className="member-name">{m.isHost ? '👑' : ''}{m.nickname}</span>
             <div className={`member-dot ${m.online ? 'online' : 'offline'}`} />
           </div>
         ))}
@@ -282,9 +265,7 @@ export default function Room() {
                 item.isOwn ? 'timer-own' : '',
               ].filter(Boolean).join(' ')}
             >
-              {/* 背景进度 */}
               <div className="rtc-bg-progress" style={{ width: `${item.progressPercent}%` }} />
-
               <div className="rtc-body">
                 <div className="rtc-left">
                   <span className="rtc-emoji">{item.foodEmoji}</span>
@@ -298,8 +279,6 @@ export default function Room() {
                   <span className={`rtc-status ${item.urgencyClass} ${item.statusClass}`}>{item.statusText}</span>
                 </div>
               </div>
-
-              {/* 操作按钮 */}
               {item.status === 'running' && (roomStore.isHost || item.isOwn) && (
                 <div className="rtc-actions">
                   <button className="rtc-btn done" onClick={() => roomStore.updateTimer(item.id, 'done')}>✓ 捞起</button>

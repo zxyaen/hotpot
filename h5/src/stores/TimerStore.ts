@@ -51,10 +51,10 @@ export class TimerStore {
     this.notify();
   }
 
+  // 返回 null 时表示超出上限（调用方负责提示）
   addTimer(foodId: string, timePreference: 'min' | 'recommended' | 'max' = 'recommended'): TimerItem | null {
     if (this.runningCount >= MAX_TIMERS) {
-      alert('同时最多计时8个');
-      return null;
+      return null; // 不再用 alert()，由调用方处理
     }
     const food = getFoodById(foodId);
     if (!food) return null;
@@ -84,7 +84,7 @@ export class TimerStore {
 
   cancelTimer(id: string) {
     const t = this.timers.find(x => x.id === id);
-    if (!t) return;
+    if (!t || t.status !== 'running') return;
     t.status = 'cancelled';
     this.saveToStorage();
     this.notify();
@@ -152,9 +152,7 @@ export class TimerStore {
   }
 
   private saveToHistory() {
-    const doneList = this.timers.filter(t => t.status === 'done' || (t.status === 'running' && this.getRemaining(t) <= 0));
-    if (doneList.length === 0) return;
-
+    if (this.timers.length === 0) return;
     const firstStartAt = Math.min(...this.timers.map(t => t.startAt));
     const pot = this.currentPotId ? getPotById(this.currentPotId) : null;
     const record: HistoryRecord = {

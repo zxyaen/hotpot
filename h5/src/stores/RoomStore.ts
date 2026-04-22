@@ -78,6 +78,7 @@ export class RoomStore {
       this.notify();
 
       const url = this.getWsUrl();
+      let settled = false;
       const socket = new WebSocket(url);
       this.socket = socket;
 
@@ -86,7 +87,7 @@ export class RoomStore {
         this.reconnectCount = 0;
         this.startPing();
         this.notify();
-        resolve();
+        if (!settled) { settled = true; resolve(); }
       };
 
       socket.onmessage = (e) => {
@@ -101,6 +102,7 @@ export class RoomStore {
         this.wsState = 'disconnected';
         this.socket = null;
         this.notify();
+        if (!settled) { settled = true; reject(new Error('连接失败')); return; }
         if (!this.isManualDisconnect && this.isInRoom) {
           this.tryReconnect();
         }
@@ -109,7 +111,7 @@ export class RoomStore {
       socket.onerror = () => {
         this.wsState = 'error';
         this.notify();
-        reject(new Error('连接失败'));
+        // 不在这里 reject，等 onclose 触发时统一处理
       };
     });
   }
