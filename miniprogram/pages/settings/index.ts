@@ -75,8 +75,8 @@ Page({
 
   onAbout() {
     wx.showModal({
-      title: '关于',
-      content: '熟了吗？v0.2.0\n让每一涮都恰到好处 🔥',
+      title: '关于 熟了吗？',
+      content: '熟了吗？v0.2.0\n让每一涮都恰到好处 🔥\n\n作者：Hidioter',
       showCancel: false,
     });
   },
