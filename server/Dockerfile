@@ -21,6 +21,9 @@ RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/data ./data
 
+# 设置生产环境变量
+ENV NODE_ENV=production
+
 # CloudBase 云托管通过环境变量 PORT 注入端口，默认 3000
 EXPOSE 3000
 
