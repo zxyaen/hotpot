@@ -55,12 +55,8 @@
   <!-- 多人同步 -->
   <view class="card">
     <view class="section-title">👥 多人同步</view>
-    <view class="row">
-      <text class="row-label">后端地址</text>
-      <input class="row-input" value="{{serverHost}}" placeholder="https://your-server.com" bindinput="onServerHostInput" />
-    </view>
-    <view class="hint">仅在使用多人同桌功能时需要配置</view>
-    <button class="btn-secondary" bindtap="onGoToRoom">进入房间</button>
+    <view class="sync-desc">创建或加入房间，同桌朋友一起共享计时</view>
+    <button class="btn-enter-room" bindtap="onGoToRoom">进入房间 →</button>
   </view>
 
   <!-- 关于 -->

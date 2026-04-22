@@ -31,9 +31,41 @@
     </view>
   </view>
 
+  <!-- 批量操作工具栏 -->
+  <view class="batch-toolbar" wx:if="{{batchMode}}">
+    <view class="batch-info">
+      <text class="batch-count" wx:if="{{selectedIds.length > 0}}">已选 {{selectedIds.length}} 个</text>
+      <text class="batch-count" wx:else>点击卡片选择</text>
+    </view>
+    <view class="batch-actions">
+      <view class="batch-btn batch-select-all" bindtap="onSelectAll">
+        {{selectedIds.length === runningTimers.length ? '取消全选' : '全选'}}
+      </view>
+      <view
+        class="batch-btn batch-cancel-btn {{selectedIds.length === 0 ? 'disabled' : ''}}"
+        bindtap="onBatchCancel"
+      >取消计时</view>
+    </view>
+  </view>
+
   <!-- 计时器列表 -->
   <view class="timer-list" wx:if="{{timers.length > 0}}">
-    <view class="timer-card {{item.statusClass}}" wx:for="{{timers}}" wx:key="id">
+    <view
+      class="timer-card {{item.statusClass}} {{batchMode && item.status === 'running' && !item.isOver ? 'batch-selectable' : ''}} {{batchMode && selectedIds.indexOf(item.id) > -1 ? 'batch-selected' : ''}}"
+      wx:for="{{timers}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      data-status="{{item.status}}"
+      data-isover="{{item.isOver}}"
+      bindtap="onCardTap"
+    >
+      <!-- 多选勾选框 -->
+      <view class="select-check" wx:if="{{batchMode && item.status === 'running' && !item.isOver}}">
+        <view class="check-circle {{selectedIds.indexOf(item.id) > -1 ? 'checked' : ''}}">
+          <text wx:if="{{selectedIds.indexOf(item.id) > -1}}">✓</text>
+        </view>
+      </view>
+
       <view class="timer-header">
         <view class="timer-food">
           <text class="food-emoji">{{item.foodEmoji}}</text>
@@ -61,16 +93,16 @@
         <view class="progress-fill {{item.isOver ? 'over' : ''}}" style="width: {{item.progressPercent}}%"></view>
       </view>
 
-      <!-- 操作按钮 -->
-      <view class="timer-actions">
+      <!-- 操作按钮（批量模式下隐藏） -->
+      <view class="timer-actions" wx:if="{{!batchMode}}">
         <block wx:if="{{item.status === 'running' && !item.isOver}}">
-          <button class="btn-mini btn-cancel" data-id="{{item.id}}" bindtap="onCancelTimer">取消</button>
+          <button class="btn-mini btn-cancel" data-id="{{item.id}}" bindtap="onCancelTimer" catchtap="onCancelTimer">取消</button>
         </block>
         <block wx:elif="{{item.isOver}}">
-          <button class="btn-mini btn-confirm" data-id="{{item.id}}" bindtap="onConfirmDone">我已捞出</button>
+          <button class="btn-mini btn-confirm" data-id="{{item.id}}" bindtap="onConfirmDone" catchtap="onConfirmDone">我已捞出</button>
         </block>
         <block wx:else>
-          <button class="btn-mini btn-remove" data-id="{{item.id}}" bindtap="onRemoveTimer">移除</button>
+          <button class="btn-mini btn-remove" data-id="{{item.id}}" bindtap="onRemoveTimer" catchtap="onRemoveTimer">移除</button>
         </block>
       </view>
     </view>
@@ -85,13 +117,23 @@
 
   <!-- 底部操作栏 -->
   <view class="bottom-actions">
-    <button class="btn-primary btn-add" bindtap="onAddFood">
-      + 下菜开始计时
-    </button>
-    <view class="bottom-secondary" wx:if="{{timers.length > 0}}">
-      <text class="link" bindtap="onClearFinished">清除已完成</text>
-      <text class="link danger" bindtap="onClearAll">结束本次</text>
+    <!-- 批量模式：退出按钮 -->
+    <view class="batch-exit-row" wx:if="{{batchMode}}">
+      <view class="btn-batch-exit" bindtap="onExitBatch">完成</view>
     </view>
+
+    <!-- 正常模式 -->
+    <block wx:else>
+      <button class="btn-add-food" bindtap="onAddFood">
+        <text class="btn-add-icon">🍲</text>
+        <text class="btn-add-text">下菜开始计时</text>
+      </button>
+      <view class="bottom-secondary" wx:if="{{timers.length > 0}}">
+        <text class="link" bindtap="onClearFinished">清除已完成</text>
+        <text class="link batch-link" wx:if="{{runningCount > 0}}" bindtap="onEnterBatch">批量取消</text>
+        <text class="link danger" bindtap="onClearAll">结束本次</text>
+      </view>
+    </block>
   </view>
 
   <!-- 到时提醒弹窗 -->

@@ -80,6 +80,7 @@
   padding: 24rpx;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
   border-left: 8rpx solid #27AE60;
+  position: relative;
 }
 .timer-card.status-over {
   border-left-color: #E74C3C;
@@ -237,22 +238,40 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 24rpx 30rpx calc(24rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, transparent 0%, #FFF5E6 40%);
+  padding: 20rpx 30rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(255,245,230,0) 0%, #FFF5E6 35%);
   z-index: 10;
 }
-.btn-add {
+
+/* 下菜按钮 - 新设计 */
+.btn-add-food {
   width: 100%;
-  height: 96rpx;
-  line-height: 96rpx;
-  font-size: 34rpx;
-  font-weight: 600;
-  box-shadow: 0 8rpx 24rpx rgba(192, 57, 43, 0.4);
+  height: 100rpx;
+  background: linear-gradient(135deg, #E8432D 0%, #C0392B 50%, #8B0000 100%);
+  border: none;
+  border-radius: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 28rpx rgba(192, 57, 43, 0.45), 0 2rpx 8rpx rgba(0,0,0,0.1);
+  padding: 0;
 }
+.btn-add-food::after { border: none; }
+.btn-add-icon {
+  font-size: 40rpx;
+  margin-right: 12rpx;
+}
+.btn-add-text {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2rpx;
+}
+
 .bottom-secondary {
   display: flex;
   justify-content: space-around;
-  margin-top: 16rpx;
+  margin-top: 14rpx;
 }
 .link {
   font-size: 26rpx;
@@ -261,6 +280,98 @@
 }
 .link.danger {
   color: #E74C3C;
+}
+.link.batch-link {
+  color: #C0392B;
+  font-weight: 500;
+}
+
+/* 批量模式工具栏 */
+.batch-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(192,57,43,0.1);
+  border: 2rpx solid rgba(192,57,43,0.15);
+}
+.batch-info {}
+.batch-count {
+  font-size: 28rpx;
+  color: #C0392B;
+  font-weight: 600;
+}
+.batch-actions {
+  display: flex;
+  gap: 16rpx;
+}
+.batch-btn {
+  font-size: 26rpx;
+  padding: 12rpx 28rpx;
+  border-radius: 32rpx;
+  font-weight: 500;
+}
+.batch-select-all {
+  background: #F5F5F5;
+  color: #34495E;
+}
+.batch-cancel-btn {
+  background: #C0392B;
+  color: #fff;
+}
+.batch-cancel-btn.disabled {
+  background: #ECB9B4;
+}
+
+/* 批量模式下计时卡片样式 */
+.timer-card.batch-selectable {
+  position: relative;
+  cursor: pointer;
+}
+.timer-card.batch-selected {
+  border-left-color: #C0392B !important;
+  background: #FFF5F5 !important;
+}
+.select-check {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  z-index: 2;
+}
+.check-circle {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 3rpx solid #BDC3C7;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: #fff;
+  transition: all 0.15s;
+}
+.check-circle.checked {
+  background: #C0392B;
+  border-color: #C0392B;
+}
+
+/* 批量退出按钮 */
+.batch-exit-row {
+  display: flex;
+  justify-content: center;
+}
+.btn-batch-exit {
+  background: #fff;
+  color: #C0392B;
+  border: 2rpx solid #C0392B;
+  border-radius: 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  padding: 20rpx 80rpx;
 }
 
 /* 到时提醒弹窗 */

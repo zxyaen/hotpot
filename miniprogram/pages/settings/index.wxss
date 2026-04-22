@@ -79,6 +79,23 @@
   color: #95A5A6;
   margin: 12rpx 0 20rpx;
 }
+.sync-desc {
+  font-size: 26rpx;
+  color: #7F8C8D;
+  margin-bottom: 24rpx;
+  line-height: 1.6;
+}
+.btn-enter-room {
+  width: 100%;
+  background: linear-gradient(135deg, #C0392B 0%, #8B0000 100%);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 48rpx;
+  padding: 22rpx 0;
+  border: none;
+  box-shadow: 0 6rpx 20rpx rgba(192,57,43,0.3);
+}
 .btn-secondary {
   background: #fff;
   border: 2rpx solid #C0392B !important;

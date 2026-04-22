@@ -8,10 +8,14 @@ const app = getApp<IAppOption>();
 Page({
   data: {
     timers: [] as any[],
+    runningTimers: [] as any[],
     currentPot: null as Pot | null,
     runningCount: 0,
     showAlertModal: false,
     alertTimer: null as TimerItem | null,
+    // 批量模式
+    batchMode: false,
+    selectedIds: [] as string[],
   },
 
   unsubscribe: null as null | (() => void),
@@ -19,7 +23,6 @@ Page({
   onLoad() {
     const store: TimerStore = app.globalData.timerStore;
     if (!store) return;
-    // 到时提醒回调
     store.onTimerEnd((timer) => {
       this.setData({
         showAlertModal: true,
@@ -58,7 +61,6 @@ Page({
         progressPercent: progress,
         totalText: formatDuration(total),
         isOver,
-        // 状态标签
         statusText:
           t.status === 'done' ? '已完成' :
           t.status === 'cancelled' ? '已取消' :
@@ -70,8 +72,11 @@ Page({
       };
     });
 
+    const runningTimers = timersView.filter(t => t.status === 'running' && !t.isOver);
+
     this.setData({
       timers: timersView,
+      runningTimers,
       currentPot: pot,
       runningCount: store.runningCount,
     });
@@ -83,6 +88,59 @@ Page({
 
   onAddFood() {
     wx.navigateTo({ url: '/pages/foods/index' });
+  },
+
+  // 卡片点击：批量模式下切换选中，普通模式不处理
+  onCardTap(e: any) {
+    if (!this.data.batchMode) return;
+    const id = e.currentTarget.dataset.id;
+    const status = e.currentTarget.dataset.status;
+    const isOver = e.currentTarget.dataset.isover;
+    if (status !== 'running' || isOver) return;
+
+    const selected = [...this.data.selectedIds];
+    const idx = selected.indexOf(id);
+    if (idx >= 0) {
+      selected.splice(idx, 1);
+    } else {
+      selected.push(id);
+    }
+    this.setData({ selectedIds: selected });
+  },
+
+  // 进入批量模式
+  onEnterBatch() {
+    this.setData({ batchMode: true, selectedIds: [] });
+  },
+
+  // 退出批量模式
+  onExitBatch() {
+    this.setData({ batchMode: false, selectedIds: [] });
+  },
+
+  // 全选 / 取消全选
+  onSelectAll() {
+    const runningIds = this.data.runningTimers.map((t: any) => t.id);
+    const allSelected = this.data.selectedIds.length === runningIds.length;
+    this.setData({ selectedIds: allSelected ? [] : runningIds });
+  },
+
+  // 批量取消
+  onBatchCancel() {
+    const ids = this.data.selectedIds;
+    if (ids.length === 0) return;
+    wx.showModal({
+      title: '批量取消计时',
+      content: `确定取消 ${ids.length} 个正在计时的食材？`,
+      success: (res) => {
+        if (res.confirm) {
+          const store: TimerStore = app.globalData.timerStore;
+          ids.forEach(id => store.cancelTimer(id));
+          this.setData({ batchMode: false, selectedIds: [] });
+          wx.showToast({ title: `已取消 ${ids.length} 个`, icon: 'none' });
+        }
+      },
+    });
   },
 
   onCancelTimer(e: any) {
@@ -124,6 +182,7 @@ Page({
         if (res.confirm) {
           const store: TimerStore = app.globalData.timerStore;
           store.clearAll();
+          this.setData({ batchMode: false, selectedIds: [] });
           wx.showToast({ title: '已保存到历史', icon: 'success' });
         }
       },
