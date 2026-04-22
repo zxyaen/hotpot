@@ -165,6 +165,7 @@ export class TimerStore {
    * 获取计时器剩余秒数（> 0 表示还在倒计时）
    */
   getRemaining(timer: TimerItem): number {
+    if (timer.status !== 'running') return 0;
     const elapsed = Math.floor((Date.now() - timer.startAt) / 1000);
     return Math.max(0, timer.duration - elapsed);
   }

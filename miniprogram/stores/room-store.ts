@@ -104,6 +104,8 @@ export class RoomStore {
   }
 
   getRemaining(timer: RoomTimer): number {
+    // 已完成或已取消，直接返回 0
+    if (timer.status === 'done' || timer.status === 'cancelled') return 0;
     // 使用服务端校准后的时间
     const now = Date.now() + this.serverTimeOffset;
     const elapsed = Math.floor((now - timer.startAt) / 1000);
