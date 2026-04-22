@@ -22,19 +22,27 @@
     "list": [
       {
         "pagePath": "pages/home/index",
-        "text": "计时"
+        "text": "计时",
+        "iconPath": "assets/tabbar/timer.png",
+        "selectedIconPath": "assets/tabbar/timer-active.png"
       },
       {
         "pagePath": "pages/foods/index",
-        "text": "食材"
+        "text": "食材",
+        "iconPath": "assets/tabbar/foods.png",
+        "selectedIconPath": "assets/tabbar/foods-active.png"
       },
       {
         "pagePath": "pages/history/index",
-        "text": "历史"
+        "text": "历史",
+        "iconPath": "assets/tabbar/history.png",
+        "selectedIconPath": "assets/tabbar/history-active.png"
       },
       {
         "pagePath": "pages/settings/index",
-        "text": "设置"
+        "text": "设置",
+        "iconPath": "assets/tabbar/settings.png",
+        "selectedIconPath": "assets/tabbar/settings-active.png"
       }
     ]
   },
