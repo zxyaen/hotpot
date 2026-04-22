@@ -21,11 +21,11 @@ const FOODS: Food[] = JSON.parse(readFileSync(foodsPath, 'utf-8'));
 const POTS: Pot[] = JSON.parse(readFileSync(potsPath, 'utf-8'));
 
 async function main() {
+  const isDev = process.env.NODE_ENV !== 'production';
   const app = Fastify({
-    logger: {
-      level: 'info',
-      transport: { target: 'pino-pretty' },
-    },
+    logger: isDev
+      ? { level: 'info', transport: { target: 'pino-pretty' } }
+      : { level: 'info' },
   });
 
   // 允许小程序跨域访问
