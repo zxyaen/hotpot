@@ -57,6 +57,14 @@ button { font-family: inherit; }
   position: relative;
 }
 
+.app-header-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
 .app-header-title {
   font-size: 19px;
   font-weight: 700;

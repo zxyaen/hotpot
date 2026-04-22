@@ -13,7 +13,7 @@ function sortByPinyin(foods: ReturnType<typeof getAllFoods>) {
 }
 
 export default function Foods() {
-  const { timerStore, openSubPage, tick } = useApp();
+  const { timerStore, openSubPage, tick, timePref } = useApp();
   // tick 用于触发重渲（自定义食材新增后刷新列表）
   void tick;
 
@@ -40,7 +40,7 @@ export default function Foods() {
       });
       return;
     }
-    const result = timerStore.addTimer(foodId);
+    const result = timerStore.addTimer(foodId, timePref);
     if (result === null) {
       toast('同时最多计时8个');
       return;

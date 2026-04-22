@@ -68,6 +68,13 @@
 /* 危险操作 */
 .danger-text { color: #E74C3C !important; }
 
+/* 时间偏好说明 */
+.settings-group-desc {
+  font-size: 12px;
+  color: var(--color-text-sub);
+  padding: 0 20px 8px;
+}
+
 /* Vant 覆盖 */
 .van-cell-group--inset { margin: 0 14px !important; border-radius: 12px !important; }
 
@@ -76,10 +83,14 @@
   display: flex; flex-direction: column; align-items: center;
   padding: 32px 24px;
 }
-.about-emoji { font-size: 52px; margin-bottom: 12px; }
+.about-logo {
+  width: 72px; height: 72px;
+  border-radius: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(192,57,43,0.18);
+}
 .about-title { font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }
-.about-desc { font-size: 14px; color: var(--color-text-sub); margin-bottom: 8px; }
-.about-author { font-size: 12px; color: #aaa; margin-bottom: 24px; }
+.about-desc { font-size: 14px; color: var(--color-text-sub); margin-bottom: 24px; }
 .about-close-btn {
   background: var(--color-primary); color: #fff;
   border: none; border-radius: 22px;

@@ -13,16 +13,16 @@ import 'react-vant/lib/index.css';
 import './App.css';
 
 const PAGE_TITLES: Record<string, string> = {
-  home: '🔥 熟了吗？',
-  foods: '🥩 食材库',
-  room: '🍜 同桌火锅',
-  history: '📋 历史记录',
-  settings: '⚙️ 设置',
+  home: '熟了吗？',
+  foods: '食材库',
+  room: '同桌火锅',
+  history: '历史记录',
+  settings: '设置',
 };
 
 const SUB_TITLES: Record<string, string> = {
-  'custom-food': '🥩 自定义食材',
-  'custom-pot':  '🍲 自定义锅底',
+  'custom-food': '自定义食材',
+  'custom-pot':  '自定义锅底',
 };
 
 function AppInner() {
@@ -51,6 +51,7 @@ function AppInner() {
     <div className="app-root">
       {/* 固定顶部 Header */}
       <header className="app-header">
+        <img src="/logo192.png" alt="logo" className="app-header-logo" />
         <span className="app-header-title">{PAGE_TITLES[currentTab]}</span>
         {currentTab === 'home' && timerStore.runningCount > 0 && (
           <span className="header-badge">{timerStore.runningCount}</span>

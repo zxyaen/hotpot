@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "熟了吗？",
+  "name": "熟了吗？- 火锅计时助手",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#C0392B",
+  "background_color": "#FFF5E6",
+  "description": "让每一涮都恰到好处 🔥"
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Popup } from 'react-vant';
+import { useApp } from '../context/AppContext';
 import './Settings.css';
 
 const TIME_PREFS = [
@@ -9,10 +10,10 @@ const TIME_PREFS = [
 ];
 
 export default function Settings() {
+  const { timePref, setTimePref } = useApp();
   const [showAbout, setShowAbout] = useState(false);
   const [sound, setSound] = useState(true);
   const [vibrate, setVibrate] = useState(true);
-  const [timePref, setTimePref] = useState<'min' | 'recommended' | 'max'>('recommended');
 
   return (
     <div className="settings-page">
@@ -37,12 +38,13 @@ export default function Settings() {
 
       {/* 时间偏好 */}
       <div className="settings-group-title">⏱ 时间偏好</div>
+      <div className="settings-group-desc">影响下锅食材的计时时长，已在计时中的食材不受影响</div>
       <div className="pref-cards">
         {TIME_PREFS.map(p => (
           <div
             key={p.key}
             className={`pref-card ${timePref === p.key ? 'active' : ''}`}
-            onClick={() => setTimePref(p.key as any)}
+            onClick={() => setTimePref(p.key as 'min' | 'recommended' | 'max')}
           >
             <span className="pref-name">{p.name}</span>
             <span className="pref-desc">{p.desc}</span>
@@ -71,10 +73,9 @@ export default function Settings() {
       {/* 关于弹窗 */}
       <Popup visible={showAbout} onClose={() => setShowAbout(false)} round style={{ width: '80%' }}>
         <div className="about-box">
-          <span className="about-emoji">🔥</span>
-          <span className="about-title">熟了吗？v0.2.0</span>
+          <img src="/logo192.png" alt="logo" className="about-logo" />
+          <span className="about-title">熟了吗？v0.8.0</span>
           <span className="about-desc">让每一涮都恰到好处 🔥</span>
-          <span className="about-author">作者：Hidioter</span>
           <button className="about-close-btn" onClick={() => setShowAbout(false)}>关闭</button>
         </div>
       </Popup>
