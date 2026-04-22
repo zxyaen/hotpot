@@ -3,14 +3,23 @@
 
   <!-- ═══════════════ 大厅视图 ═══════════════ -->
   <block wx:if="{{view === 'lobby'}}">
-    <view class="lobby-header">
-      <text class="lobby-title">🍲 同桌火锅</text>
-      <text class="lobby-subtitle">创建或加入房间，和朋友一起计时</text>
+
+    <!-- 顶部 Hero -->
+    <view class="lobby-hero">
+      <text class="hero-icon">🍜</text>
+      <text class="hero-title">多人同桌同步</text>
+      <text class="hero-subtitle">同桌朋友都能看到同一锅的{'\n'}所有食材计时，一起吃最完美！</text>
     </view>
 
-    <!-- 昵称 & 头像 -->
-    <view class="card">
-      <text class="card-title">我的信息</text>
+    <!-- 我的信息（昵称 & 头像） -->
+    <view class="section-card info-card">
+      <view class="section-card-head">
+        <view class="card-icon-wrap card-icon-me">👤</view>
+        <view>
+          <text class="section-card-title">我的信息</text>
+          <text class="section-card-desc">选个头像，设置昵称</text>
+        </view>
+      </view>
       <view class="avatar-row">
         <view
           wx:for="{{AVATARS}}"
@@ -29,32 +38,67 @@
       />
     </view>
 
-    <!-- 创建房间 -->
-    <view class="card">
-      <text class="card-title">创建房间</text>
-      <text class="card-desc">你将成为房主，可以选择锅底并邀请朋友</text>
+    <!-- 开一个新锅 -->
+    <view class="section-card create-card">
+      <view class="section-card-head">
+        <view class="card-icon-wrap card-icon-create">🔍</view>
+        <view>
+          <text class="section-card-title">开一个新锅</text>
+          <text class="section-card-desc">创建房间，邀请同桌扫码加入</text>
+        </view>
+      </view>
       <button
-        class="btn btn-primary"
+        class="btn-create"
         loading="{{connecting}}"
         bindtap="onCreateRoom"
       >🔥 创建房间</button>
     </view>
 
-    <!-- 加入房间 -->
-    <view class="card">
-      <text class="card-title">加入房间</text>
-      <input
-        class="input input-code"
-        placeholder="输入4位房间码"
-        maxlength="4"
-        value="{{joinCode}}"
-        bindinput="onJoinCodeInput"
-      />
-      <button
-        class="btn btn-secondary"
-        loading="{{connecting}}"
-        bindtap="onJoinRoom"
-      >🚀 加入房间</button>
+    <!-- 加入已有的锅 -->
+    <view class="section-card join-card">
+      <view class="section-card-head">
+        <view class="card-icon-wrap card-icon-join">🚀</view>
+        <view>
+          <text class="section-card-title">加入已有的锅</text>
+          <text class="section-card-desc">扫描好友的二维码或输入房间码</text>
+        </view>
+      </view>
+      <view class="join-input-row">
+        <input
+          class="input input-code"
+          placeholder="输入4位房间码"
+          maxlength="4"
+          value="{{joinCode}}"
+          bindinput="onJoinCodeInput"
+        />
+        <button
+          class="btn-join"
+          loading="{{connecting}}"
+          bindtap="onJoinRoom"
+        >加入</button>
+      </view>
+      <button class="btn-scan" bindtap="onScanCode">📷 扫码加入</button>
+    </view>
+
+    <!-- 同步功能介绍 -->
+    <view class="section-card feature-card">
+      <text class="feature-title">✨ 同步功能介绍</text>
+      <view class="feature-item">
+        <text class="feature-num">01</text>
+        <text class="feature-text"><text class="feature-label">实时同步：</text>任何人添加食材、计时结束，同桌所有手机同步更新</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-num">02</text>
+        <text class="feature-text"><text class="feature-label">共享看板：</text>统一视图，谁下的什么料一目了然，不会搞混</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-num">03</text>
+        <text class="feature-text"><text class="feature-label">所有人提醒：</text>时间到时桌上所有手机同时响，抢着捞才好玩</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-num">04</text>
+        <text class="feature-text"><text class="feature-label">无需登录：</text>临时房间，吃完自动解散，保护隐私</text>
+      </view>
     </view>
 
     <!-- 服务器设置 -->
@@ -62,20 +106,22 @@
       <text>⚙️ 服务器设置</text>
       <text class="arrow">{{showSettings ? '▲' : '▼'}}</text>
     </view>
-    <view class="card settings-card" wx:if="{{showSettings}}">
-      <text class="card-title">WebSocket 服务器地址</text>
+    <view class="section-card settings-card" wx:if="{{showSettings}}">
+      <text class="section-card-title">WebSocket 服务器地址</text>
       <input
         class="input"
         placeholder="ws://your-server:3000/ws"
         value="{{wsUrl}}"
         bindinput="onWsUrlInput"
       />
-      <button class="btn btn-ghost" bindtap="onSaveSettings">保存</button>
+      <button class="btn-ghost-sm" bindtap="onSaveSettings">保存</button>
     </view>
+
   </block>
 
   <!-- ═══════════════ 房间视图 ═══════════════ -->
   <block wx:if="{{view === 'room'}}">
+  <view class="room-wrap">
 
     <!-- 顶部状态栏 -->
     <view class="room-header">
@@ -152,6 +198,7 @@
     <view class="leave-row">
       <button class="btn btn-danger-ghost" bindtap="onLeaveRoom">离开房间</button>
     </view>
+  </view>
   </block>
 
   <!-- ═══════════════ 食材选择弹窗 ═══════════════ -->

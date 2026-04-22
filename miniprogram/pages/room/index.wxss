@@ -2,54 +2,90 @@
 
 .container {
   min-height: 100vh;
-  background: #1a0a00;
-  padding: 0 0 120rpx;
+  background: #FFF0E6;
+  padding: 0 0 60rpx;
 }
 
-/* ─── 大厅 ─────────────────────────────────────────── */
-.lobby-header {
-  background: linear-gradient(135deg, #8b1a0a 0%, #c0392b 100%);
-  padding: 60rpx 32rpx 48rpx;
+/* ─── 大厅 Hero ─────────────────────────────────────── */
+.lobby-hero {
+  background: linear-gradient(160deg, #E8432D 0%, #D4371F 100%);
+  padding: 70rpx 40rpx 60rpx;
   text-align: center;
 }
 
-.lobby-title {
+.hero-icon {
+  display: block;
+  font-size: 72rpx;
+  margin-bottom: 20rpx;
+}
+
+.hero-title {
   display: block;
   font-size: 48rpx;
   font-weight: bold;
   color: #fff;
+  letter-spacing: 2rpx;
 }
 
-.lobby-subtitle {
+.hero-subtitle {
   display: block;
-  font-size: 26rpx;
-  color: rgba(255,255,255,0.75);
-  margin-top: 12rpx;
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.88);
+  margin-top: 16rpx;
+  line-height: 1.7;
 }
 
-.card {
-  background: #2a1000;
-  border-radius: 20rpx;
+/* ─── 通用卡片 ──────────────────────────────────────── */
+.section-card {
+  background: #fff;
+  border-radius: 24rpx;
   margin: 24rpx 24rpx 0;
   padding: 32rpx;
-  border: 1rpx solid #3d1a00;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.06);
 }
 
-.card-title {
+.section-card-head {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-bottom: 28rpx;
+}
+
+.card-icon-wrap {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.card-icon-me   { background: #FFF0E6; }
+.card-icon-create { background: #FFF0E6; border: 2rpx solid rgba(232,67,45,0.2); }
+.card-icon-join { background: #E8F8F5; }
+
+.section-card-title {
   display: block;
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: bold;
-  color: #ff6b2b;
-  margin-bottom: 16rpx;
+  color: #1a1a1a;
 }
 
-.card-desc {
+.section-card-desc {
   display: block;
   font-size: 24rpx;
-  color: #888;
-  margin-bottom: 24rpx;
+  color: #999;
+  margin-top: 6rpx;
 }
 
+/* 开新锅卡片：橙红边框 */
+.create-card {
+  border: 2rpx solid #E8432D;
+}
+
+/* ─── 头像选择 ──────────────────────────────────────── */
 .avatar-row {
   display: flex;
   flex-wrap: wrap;
@@ -61,7 +97,7 @@
   width: 72rpx;
   height: 72rpx;
   border-radius: 50%;
-  background: #3d1a00;
+  background: #F5F5F5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,18 +106,19 @@
 }
 
 .avatar-active {
-  border-color: #ff6b2b;
-  background: rgba(255, 107, 43, 0.2);
+  border-color: #E8432D;
+  background: rgba(232,67,45,0.08);
 }
 
+/* ─── 输入框 ────────────────────────────────────────── */
 .input {
   width: 100%;
-  background: #3d1a00;
-  border-radius: 12rpx;
+  background: #F7F7F7;
+  border-radius: 14rpx;
   padding: 28rpx 24rpx;
-  color: #fff;
+  color: #333;
   font-size: 28rpx;
-  border: 1rpx solid #5a2a00;
+  border: 1.5rpx solid #EBEBEB;
   box-sizing: border-box;
   display: block;
   line-height: 1.5;
@@ -91,10 +128,135 @@
   font-size: 36rpx;
   font-weight: bold;
   text-align: center;
-  text-transform: uppercase;
+  letter-spacing: 8rpx;
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* ─── 创建房间大按钮 ─────────────────────────────────── */
+.btn-create {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #E8432D, #C0392B);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: bold;
+  border-radius: 48rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(232,67,45,0.35);
+  letter-spacing: 2rpx;
+}
+.btn-create::after { border: none; }
+
+/* ─── 加入行：输入框 + 加入按钮 ─────────────────────── */
+.join-input-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
   margin-bottom: 20rpx;
 }
 
+.btn-join {
+  flex-shrink: 0;
+  width: 140rpx;
+  height: 88rpx;
+  background: #27AE60;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: bold;
+  border-radius: 14rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.btn-join::after { border: none; }
+
+/* 扫码加入次级按钮 */
+.btn-scan {
+  width: 100%;
+  height: 84rpx;
+  background: #F5F5F5;
+  color: #555;
+  font-size: 28rpx;
+  border-radius: 14rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1rpx;
+}
+.btn-scan::after { border: none; }
+
+/* ─── 功能介绍卡片 ──────────────────────────────────── */
+.feature-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 28rpx;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.feature-num {
+  flex-shrink: 0;
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #E8432D;
+  min-width: 40rpx;
+  line-height: 1.8;
+}
+
+.feature-text {
+  font-size: 26rpx;
+  color: #555;
+  line-height: 1.8;
+}
+
+.feature-label {
+  font-weight: bold;
+  color: #333;
+}
+
+/* ─── 服务器设置 ────────────────────────────────────── */
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  color: #aaa;
+  font-size: 24rpx;
+  margin-top: 8rpx;
+}
+
+.arrow { font-size: 20rpx; }
+
+.settings-card { margin-top: 0; }
+
+.btn-ghost-sm {
+  margin-top: 16rpx;
+  background: transparent;
+  color: #aaa;
+  border: 1.5rpx solid #ddd;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  padding: 16rpx;
+  width: 100%;
+  text-align: center;
+}
+.btn-ghost-sm::after { border: none; }
+
+/* ─── 房间视图公用按钮（保留） ──────────────────────── */
 .btn {
   width: 100%;
   border-radius: 16rpx;
@@ -109,12 +271,6 @@
 .btn-primary {
   background: linear-gradient(135deg, #e74c3c, #c0392b);
   color: #fff;
-}
-
-.btn-secondary {
-  background: #3d1a00;
-  color: #ff6b2b;
-  border: 2rpx solid #ff6b2b;
 }
 
 .btn-ghost {
@@ -135,19 +291,12 @@
   margin: 0 auto;
 }
 
-.settings-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24rpx 32rpx;
-  color: #666;
-  font-size: 26rpx;
-  margin-top: 8rpx;
+/* ─── 房间视图包裹层 ─────────────────────────────────── */
+.room-wrap {
+  min-height: 100vh;
+  background: #1a0a00;
+  padding-bottom: 60rpx;
 }
-
-.arrow { font-size: 22rpx; }
-
-.settings-card { margin-top: 0; border-top: none; border-radius: 0 0 20rpx 20rpx; }
 
 /* ─── 房间顶栏 ──────────────────────────────────────── */
 .room-header {

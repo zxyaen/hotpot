@@ -209,6 +209,34 @@ Page({
     }
   },
 
+  onScanCode() {
+    const { nickname, avatar } = this.data;
+    if (!nickname.trim()) {
+      wx.showToast({ title: '请先输入昵称', icon: 'none' });
+      return;
+    }
+    wx.scanCode({
+      onlyFromCamera: false,
+      success: async (res) => {
+        const code = (res.result || '').trim().toUpperCase();
+        if (!code) return;
+        this.setData({ joinCode: code, connecting: true });
+        this.saveProfile();
+        try {
+          const store: RoomStore = app.globalData.roomStore;
+          await store.joinRoom(code, nickname.trim(), avatar);
+        } catch (e: any) {
+          wx.showToast({ title: e.message || '加入失败', icon: 'none' });
+        } finally {
+          this.setData({ connecting: false });
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: '扫码取消', icon: 'none' });
+      }
+    });
+  },
+
   saveProfile() {
     try {
       wx.setStorageSync('room_nickname', this.data.nickname);
