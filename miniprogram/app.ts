@@ -33,7 +33,7 @@ App<IAppOption>({
     // 从后端拉取最新食材和锅底数据
     this.fetchRemoteData();
 
-    console.log('🔥 火锅计时助手启动');
+    console.log('🔥 熟了吗？启动');
   },
 
   fetchRemoteData() {

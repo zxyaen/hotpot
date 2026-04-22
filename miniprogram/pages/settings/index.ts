@@ -76,7 +76,7 @@ Page({
   onAbout() {
     wx.showModal({
       title: '关于',
-      content: '火锅计时助手 v0.2.0\n让每一涮都恰到好处 🔥',
+      content: '熟了吗？v0.2.0\n让每一涮都恰到好处 🔥',
       showCancel: false,
     });
   },
