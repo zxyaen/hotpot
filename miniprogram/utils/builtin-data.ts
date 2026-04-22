@@ -58,27 +58,40 @@ const POTS: Pot[] = [
 // 分类列表（去重+按内置顺序）
 const CATEGORIES = ['牛肉类', '羊肉类', '海鲜类', '内脏类', '丸滑类', '豆制品', '主食类', '蔬菜类', '菌菇类'];
 
+// 可变的内存数据（初始为内置数据，可被远端数据覆盖）
+let _foods: Food[] = [...FOODS];
+let _pots: Pot[] = [...POTS];
+
 export function initBuiltinData() {
-  // 缓存到 globalData，供全局使用
-  getApp<IAppOption>().globalData.foods = FOODS;
-  getApp<IAppOption>().globalData.pots = POTS;
-  getApp<IAppOption>().globalData.categories = CATEGORIES;
+  // 重置为内置数据
+  _foods = [...FOODS];
+  _pots = [...POTS];
+}
+
+/** 用远端数据更新食材（并触发页面刷新） */
+export function updateFoods(foods: Food[]) {
+  _foods = foods;
+}
+
+/** 用远端数据更新锅底 */
+export function updatePots(pots: Pot[]) {
+  _pots = pots;
 }
 
 export function getAllFoods(): Food[] {
-  return FOODS;
+  return _foods;
 }
 
 export function getAllPots(): Pot[] {
-  return POTS;
+  return _pots;
 }
 
 export function getFoodById(id: string): Food | undefined {
-  return FOODS.find(f => f.id === id);
+  return _foods.find(f => f.id === id);
 }
 
 export function getPotById(id: string): Pot | undefined {
-  return POTS.find(p => p.id === id);
+  return _pots.find(p => p.id === id);
 }
 
 export function getCategories(): string[] {

@@ -10,15 +10,70 @@ import { join } from 'path';
 import { setupWsServer } from './ws-gateway';
 import { roomManager } from './room-manager';
 import type { Food, Pot } from './types';
+import cloudbase from '@cloudbase/node-sdk';
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
+const TCB_ENV_ID = process.env.TCB_ENV_ID || 'hotpot-d7gn5onbkea76e975';
+const TCB_SECRET_ID = process.env.TCB_SECRET_ID || '';
+const TCB_SECRET_KEY = process.env.TCB_SECRET_KEY || '';
 
-// 加载静态数据
+// 本地兜底数据（数据库不可用时使用）
 const foodsPath = join(__dirname, '..', 'data', 'foods.json');
 const potsPath = join(__dirname, '..', 'data', 'pots.json');
-const FOODS: Food[] = JSON.parse(readFileSync(foodsPath, 'utf-8'));
-const POTS: Pot[] = JSON.parse(readFileSync(potsPath, 'utf-8'));
+const FALLBACK_FOODS: Food[] = JSON.parse(readFileSync(foodsPath, 'utf-8'));
+const FALLBACK_POTS: Pot[] = JSON.parse(readFileSync(potsPath, 'utf-8'));
+
+// 内存缓存（避免每次请求查数据库）
+let cachedFoods: Food[] | null = null;
+let cachedPots: Pot[] | null = null;
+let cacheTime = 0;
+const CACHE_TTL = 10 * 60 * 1000; // 10分钟
+
+// 初始化 CloudBase SDK
+function getDb() {
+  const app = cloudbase.init({
+    env: TCB_ENV_ID,
+    secretId: TCB_SECRET_ID,
+    secretKey: TCB_SECRET_KEY,
+  });
+  return app.database();
+}
+
+// 从数据库加载食材
+async function loadFoods(): Promise<Food[]> {
+  const now = Date.now();
+  if (cachedFoods && now - cacheTime < CACHE_TTL) return cachedFoods;
+  try {
+    const db = getDb();
+    const res = await db.collection('foods').limit(100).get();
+    if (res.data && res.data.length > 0) {
+      cachedFoods = res.data as Food[];
+      cacheTime = now;
+      return cachedFoods;
+    }
+  } catch (e) {
+    console.error('读取foods数据库失败，使用本地数据:', e);
+  }
+  return FALLBACK_FOODS;
+}
+
+// 从数据库加载锅底
+async function loadPots(): Promise<Pot[]> {
+  const now = Date.now();
+  if (cachedPots && now - cacheTime < CACHE_TTL) return cachedPots;
+  try {
+    const db = getDb();
+    const res = await db.collection('pots').limit(20).get();
+    if (res.data && res.data.length > 0) {
+      cachedPots = res.data as Pot[];
+      return cachedPots;
+    }
+  } catch (e) {
+    console.error('读取pots数据库失败，使用本地数据:', e);
+  }
+  return FALLBACK_POTS;
+}
 
 async function main() {
   const app = Fastify({
@@ -39,14 +94,16 @@ async function main() {
     endpoints: ['/api/foods', '/api/pots', '/api/time', '/api/stats', 'WS /ws'],
   }));
 
-  // 食材库
+  // 食材库（从CloudBase数据库读取，有缓存）
   app.get('/api/foods', async () => {
-    return { foods: FOODS, total: FOODS.length };
+    const foods = await loadFoods();
+    return { foods, total: foods.length };
   });
 
-  // 锅底库
+  // 锅底库（从CloudBase数据库读取，有缓存）
   app.get('/api/pots', async () => {
-    return { pots: POTS, total: POTS.length };
+    const pots = await loadPots();
+    return { pots, total: pots.length };
   });
 
   // 服务器时间（用于客户端时钟校准）
@@ -70,10 +127,11 @@ async function main() {
 
   // 监控统计
   app.get('/api/stats', async () => {
+    const [foods, pots] = await Promise.all([loadFoods(), loadPots()]);
     return {
       ...roomManager.stats(),
-      foodsCount: FOODS.length,
-      potsCount: POTS.length,
+      foodsCount: foods.length,
+      potsCount: pots.length,
       uptime: process.uptime(),
     };
   });
