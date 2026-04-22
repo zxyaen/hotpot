@@ -115,17 +115,18 @@
   width: 100%;
   background: #F7F7F7;
   border-radius: 14rpx;
-  padding: 28rpx 24rpx;
+  height: 88rpx;
+  padding: 12rpx 24rpx;
   color: #333;
   font-size: 28rpx;
   border: 1.5rpx solid #EBEBEB;
   box-sizing: border-box;
   display: block;
-  line-height: 1.5;
+  line-height: 2; 
 }
 
 .input-code {
-  font-size: 36rpx;
+  font-size: 24rpx;
   font-weight: bold;
   text-align: center;
   letter-spacing: 8rpx;
