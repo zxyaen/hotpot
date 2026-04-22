@@ -1,0 +1,27 @@
+/* History.css */
+.history-page { min-height: 100vh; background: #FFF5E6; padding-bottom: 80px; }
+.history-empty { padding: 80px 24px; text-align: center; }
+.history-empty-emoji { font-size: 64px; margin-bottom: 14px; }
+.history-empty-title { font-size: 20px; font-weight: 600; color: #2C3E50; margin-bottom: 8px; }
+.history-empty-desc { font-size: 14px; color: #95A5A6; }
+
+.history-list { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.history-card {
+  background: #fff; border-radius: 14px; padding: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.history-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.history-date { font-size: 13px; color: #95A5A6; }
+.history-pot {
+  font-size: 12px; background: rgba(192,57,43,0.08);
+  color: #C0392B; padding: 2px 10px; border-radius: 12px;
+}
+.history-stats { display: flex; gap: 24px; margin-bottom: 12px; }
+.history-stat { display: flex; flex-direction: column; }
+.stat-num { font-size: 24px; font-weight: 700; color: #2C3E50; }
+.stat-label { font-size: 12px; color: #95A5A6; }
+.history-foods { display: flex; flex-wrap: wrap; gap: 6px; }
+.history-food-tag {
+  font-size: 12px; background: #F5F5F5; color: #666;
+  padding: 4px 10px; border-radius: 14px;
+}
