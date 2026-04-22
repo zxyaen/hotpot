@@ -41,7 +41,6 @@ Page({
     }
 
     this.setData({ currentPotId: id });
-    wx.vibrateShort({ type: 'light', fail: () => {} });
     wx.showToast({ title: '已设置锅底', icon: 'success', duration: 800 });
     setTimeout(() => wx.navigateBack(), 600);
   },

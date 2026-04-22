@@ -68,9 +68,5 @@ export function initAudio() {
 }
 
 export function playAlert() {
-  // 长震动 400ms
-  wx.vibrateLong({ fail: () => {} });
-  // 连续短震动给更强提示
-  setTimeout(() => wx.vibrateShort({ type: 'heavy', fail: () => {} }), 500);
-  setTimeout(() => wx.vibrateShort({ type: 'heavy', fail: () => {} }), 800);
+  // 震动已移除
 }

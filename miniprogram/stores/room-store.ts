@@ -458,7 +458,6 @@ export class RoomStore {
       audio.src = '/assets/alert.mp3';
       audio.play();
     } catch {}
-    wx.vibrateLong({ fail: () => {} });
     this.timerEndHandlers.forEach(h => h(timer));
   }
 }

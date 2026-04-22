@@ -87,7 +87,6 @@ Page({
 
     const timer = timerStore.addTimer(id);
     if (timer) {
-      wx.vibrateShort({ type: 'light', fail: () => {} });
       wx.showToast({
         title: `${food.emoji} ${food.name} 开始计时`,
         icon: 'none',
