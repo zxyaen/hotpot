@@ -30,13 +30,14 @@ let cachedPots: Pot[] | null = null;
 let cacheTime = 0;
 const CACHE_TTL = 10 * 60 * 1000; // 10分钟
 
-// 初始化 CloudBase SDK
+// 初始化 CloudBase SDK（云托管内置身份鉴权，无需 SecretId/Key）
 function getDb() {
-  const app = cloudbase.init({
-    env: TCB_ENV_ID,
-    secretId: TCB_SECRET_ID,
-    secretKey: TCB_SECRET_KEY,
-  });
+  const initOpts: any = { env: TCB_ENV_ID };
+  if (TCB_SECRET_ID && TCB_SECRET_KEY) {
+    initOpts.secretId = TCB_SECRET_ID;
+    initOpts.secretKey = TCB_SECRET_KEY;
+  }
+  const app = cloudbase.init(initOpts);
   return app.database();
 }
 
