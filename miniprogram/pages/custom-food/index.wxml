@@ -49,22 +49,32 @@
   </view>
 
   <view class="cf-card">
-    <view class="cf-section-title">涮煮时间（秒）</view>
-    <view class="cf-hint">提示：以秒为单位，如 15秒 填 15，2分钟 填 120</view>
-    <view class="cf-row">
-      <text class="cf-label">最短时间</text>
-      <input class="cf-input cf-num" type="number" placeholder="如 60" value="{{form.cookTimeMin}}" bindinput="onInputTimeMin" />
-      <text class="cf-unit">秒</text>
-    </view>
-    <view class="cf-row">
-      <text class="cf-label">推荐时间 *</text>
-      <input class="cf-input cf-num" type="number" placeholder="如 120" value="{{form.cookTimeRec}}" bindinput="onInputTimeRec" />
-      <text class="cf-unit">秒</text>
-    </view>
-    <view class="cf-row">
-      <text class="cf-label">最长时间</text>
-      <input class="cf-input cf-num" type="number" placeholder="如 180" value="{{form.cookTimeMax}}" bindinput="onInputTimeMax" />
-      <text class="cf-unit">秒</text>
+    <view class="cf-section-title">涮煮时间</view>
+    <view class="cf-hint">以秒为单位，如 15秒填 15，2分钟填 120</view>
+    <view class="time-inputs">
+      <view class="time-input-item">
+        <text class="time-input-label">最短</text>
+        <view class="time-input-box">
+          <input class="time-input-num" type="number" placeholder="60" value="{{form.cookTimeMin}}" bindinput="onInputTimeMin" />
+          <text class="time-input-unit">秒</text>
+        </view>
+      </view>
+      <text class="time-input-sep">—</text>
+      <view class="time-input-item time-input-rec">
+        <text class="time-input-label rec">推荐 *</text>
+        <view class="time-input-box rec">
+          <input class="time-input-num" type="number" placeholder="120" value="{{form.cookTimeRec}}" bindinput="onInputTimeRec" />
+          <text class="time-input-unit">秒</text>
+        </view>
+      </view>
+      <text class="time-input-sep">—</text>
+      <view class="time-input-item">
+        <text class="time-input-label">最长</text>
+        <view class="time-input-box">
+          <input class="time-input-num" type="number" placeholder="180" value="{{form.cookTimeMax}}" bindinput="onInputTimeMax" />
+          <text class="time-input-unit">秒</text>
+        </view>
+      </view>
     </view>
   </view>
 

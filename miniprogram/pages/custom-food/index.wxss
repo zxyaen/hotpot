@@ -1,5 +1,5 @@
 .cf-page {
-  padding: 16rpx 24rpx 120rpx;
+  padding: 16rpx 24rpx 200rpx;
   background: #FFF5E6;
   min-height: 100vh;
 }
@@ -109,15 +109,7 @@
   color: #222;
   background: transparent;
 }
-.cf-num {
-  width: 140rpx;
-  flex: none;
-}
-.cf-unit {
-  font-size: 26rpx;
-  color: #888;
-  margin-left: 8rpx;
-}
+
 .cf-picker {
   font-size: 28rpx;
   color: #C0392B;
@@ -126,7 +118,68 @@
 .cf-hint {
   font-size: 22rpx;
   color: #aaa;
-  margin-bottom: 8rpx;
+  margin-bottom: 16rpx;
+}
+
+/* 时间输入三列布局 */
+.time-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  padding: 8rpx 0 16rpx;
+}
+.time-input-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+.time-input-rec {
+  flex: 1.2;
+}
+.time-input-sep {
+  color: #ccc;
+  font-size: 28rpx;
+  padding-bottom: 20rpx;
+  flex-shrink: 0;
+  width: 24rpx;
+  text-align: center;
+}
+.time-input-label {
+  font-size: 22rpx;
+  color: #999;
+}
+.time-input-label.rec {
+  color: #C0392B;
+  font-weight: 600;
+}
+.time-input-box {
+  display: flex;
+  align-items: center;
+  background: #F8F4EF;
+  border-radius: 14rpx;
+  padding: 14rpx 12rpx;
+  border: 2rpx solid #EEE5D8;
+  width: 100%;
+  box-sizing: border-box;
+}
+.time-input-box.rec {
+  background: #FFF0EE;
+  border-color: #FFB8B0;
+}
+.time-input-num {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  min-width: 0;
+}
+.time-input-unit {
+  font-size: 22rpx;
+  color: #aaa;
+  flex-shrink: 0;
 }
 
 /* 按钮区 */

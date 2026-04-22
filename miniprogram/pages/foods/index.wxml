@@ -7,6 +7,10 @@
       value="{{searchText}}"
       bindinput="onSearch"
     />
+    <view class="add-custom-btn" bindtap="onAddCustomFood">
+      <text class="add-custom-icon">➕</text>
+      <text class="add-custom-text">自定义</text>
+    </view>
   </view>
 
   <!-- 分类Tab -->
@@ -36,14 +40,6 @@
         <view class="food-name">{{item.name}}</view>
         <view class="food-time">⏱ {{item.recommendedText}}</view>
         <view class="food-tips">{{item.tips}}</view>
-      </view>
-    </view>
-    <!-- 添加自定义食材 -->
-    <view class="food-item">
-      <view class="food-card add-card" bindtap="onAddCustomFood">
-        <view class="food-emoji-big">➕</view>
-        <view class="food-name">自定义</view>
-        <view class="food-tips">添加食材</view>
       </view>
     </view>
   </view>
