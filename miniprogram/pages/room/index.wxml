@@ -169,19 +169,19 @@
             wx:key="index"
             class="cat-tag {{selectedCategory === item ? 'cat-active' : ''}}"
             data-cat="{{item}}"
-            bindtap="onSelectFoodCategory"
+            catchtap="onSelectFoodCategory"
           >{{item}}</text>
         </view>
       </scroll-view>
       <!-- 食材列表 -->
-      <scroll-view class="food-list" scroll-y>
+      <scroll-view class="food-list" scroll-y enable-flex>
         <view
           wx:for="{{foods}}"
           wx:key="id"
           wx:if="{{selectedCategory === '全部' || item.category === selectedCategory}}"
           class="food-item"
           data-id="{{item.id}}"
-          bindtap="onAddFoodTimer"
+          catchtap="onAddFoodTimer"
         >
           <text class="food-emoji">{{item.emoji}}</text>
           <view class="food-detail">

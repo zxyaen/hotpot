@@ -442,7 +442,7 @@
   border-color: #c0392b;
 }
 
-.food-list { flex: 1; overflow: hidden; }
+.food-list { flex: 1; overflow: hidden; min-height: 0; height: 0; }
 
 .food-item {
   display: flex;
