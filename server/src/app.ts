@@ -14,7 +14,7 @@ import cloudbase from '@cloudbase/node-sdk';
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
-const TCB_ENV_ID = process.env.TCB_ENV_ID || 'hotpot-d7gn5onbkea76e975';
+const TCB_ENV_ID = process.env.TCB_ENV_ID || '';
 const TCB_SECRET_ID = process.env.TCB_SECRET_ID || '';
 const TCB_SECRET_KEY = process.env.TCB_SECRET_KEY || '';
 
