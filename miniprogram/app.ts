@@ -2,7 +2,8 @@
 import { TimerStore } from './stores/timer-store';
 import { SettingStore } from './stores/setting-store';
 import { RoomStore } from './stores/room-store';
-import { initBuiltinData, updateFoods, updatePots } from './utils/builtin-data';
+import { CustomDataStore } from './stores/custom-data-store';
+import { initBuiltinData, updateFoods, updatePots, setCustomDataStore } from './utils/builtin-data';
 import { API_BASE } from './utils/config';
 
 App<IAppOption>({
@@ -10,6 +11,7 @@ App<IAppOption>({
     timerStore: null,
     settingStore: null,
     roomStore: null,
+    customDataStore: null,
   },
   onLaunch() {
     // 先用内置数据初始化（保证即使网络失败也能用）
@@ -19,6 +21,10 @@ App<IAppOption>({
     this.globalData.settingStore = new SettingStore();
     this.globalData.timerStore = new TimerStore();
     this.globalData.roomStore = new RoomStore();
+    this.globalData.customDataStore = new CustomDataStore();
+
+    // 注入自定义数据 store，使 builtin-data 合并时自定义优先
+    setCustomDataStore(this.globalData.customDataStore);
 
     // 加载存储中的历史数据
     this.globalData.settingStore.loadFromStorage();

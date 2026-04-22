@@ -1,0 +1,153 @@
+.cp-page {
+  padding: 0 0 120rpx;
+  background: #FFF5E6;
+  min-height: 100vh;
+}
+
+/* 顶部预览 */
+.pot-preview {
+  padding: 40rpx 32rpx 36rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background 0.3s;
+}
+.preview-emoji { font-size: 80rpx; line-height: 1; }
+.preview-name { font-size: 36rpx; font-weight: 700; color: #333; margin-top: 10rpx; }
+.preview-desc { font-size: 24rpx; color: #666; margin-top: 6rpx; }
+
+/* 卡片 */
+.cp-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx 28rpx 8rpx;
+  margin: 16rpx 24rpx 0;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+}
+.cp-section-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #8B0000;
+  margin-bottom: 16rpx;
+}
+.cp-hint {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-bottom: 8rpx;
+}
+
+/* 行 */
+.cp-row {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #f5f0e8;
+}
+.cp-row:last-child { border-bottom: none; }
+.cp-label {
+  width: 160rpx;
+  font-size: 28rpx;
+  color: #444;
+  flex-shrink: 0;
+}
+.cp-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #222;
+  background: transparent;
+}
+.cp-num { flex: none; width: 140rpx; }
+.cp-unit { font-size: 26rpx; color: #888; margin-left: 8rpx; }
+
+/* emoji 小显示 */
+.emoji-display-sm {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.emoji-sm { font-size: 48rpx; }
+.change-hint { font-size: 24rpx; color: #C0392B; }
+
+/* emoji picker */
+.emoji-picker {
+  background: #FFF5E6;
+  border-radius: 16rpx;
+  padding: 16rpx;
+  margin-bottom: 8rpx;
+}
+.emoji-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+.emoji-opt {
+  width: 72rpx; height: 72rpx;
+  font-size: 40rpx;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12rpx;
+  background: #fff;
+  border: 2rpx solid transparent;
+}
+.emoji-opt.active { border-color: #C0392B; background: #FFF0EE; }
+.emoji-custom-row {
+  display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx;
+}
+.emoji-custom-input {
+  flex: 1; background: #fff; border-radius: 10rpx;
+  padding: 10rpx 16rpx; font-size: 28rpx; border: 1rpx solid #eee;
+}
+.emoji-custom-btn {
+  background: #C0392B; color: #fff;
+  border-radius: 10rpx; padding: 10rpx 24rpx; font-size: 26rpx;
+}
+
+/* 颜色选择 */
+.color-swatch-cur {
+  width: 80rpx; height: 48rpx;
+  border-radius: 10rpx;
+  display: flex; align-items: center; justify-content: center;
+  border: 2rpx solid #ddd;
+  margin-right: 12rpx;
+}
+.color-picker {
+  background: #FFF5E6;
+  border-radius: 16rpx;
+  padding: 16rpx;
+  margin-bottom: 8rpx;
+}
+.color-grid {
+  display: flex; flex-wrap: wrap; gap: 12rpx;
+}
+.color-dot {
+  width: 56rpx; height: 56rpx;
+  border-radius: 50%;
+  border: 3rpx solid transparent;
+}
+.color-dot.active { border-color: #C0392B; transform: scale(1.15); }
+
+/* 系数示例 */
+.factor-examples {
+  font-size: 22rpx;
+  color: #aaa;
+  padding: 8rpx 0 12rpx;
+}
+
+/* 按钮 */
+.cp-actions {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #fff;
+  padding: 20rpx 32rpx 40rpx;
+  box-shadow: 0 -2rpx 16rpx rgba(0,0,0,0.08);
+  display: flex; flex-direction: column; gap: 16rpx;
+}
+.btn-save {
+  background: linear-gradient(135deg, #C0392B, #8B0000);
+  color: #fff; border-radius: 50rpx;
+  font-size: 32rpx; font-weight: 600;
+  height: 90rpx; line-height: 90rpx; border: none;
+}
+.btn-delete {
+  background: transparent; color: #C0392B;
+  border: 2rpx solid #C0392B; border-radius: 50rpx;
+  font-size: 28rpx; height: 80rpx; line-height: 80rpx;
+}

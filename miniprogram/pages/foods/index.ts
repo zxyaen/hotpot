@@ -3,6 +3,7 @@ import { getAllFoods, getCategories, adjustTimeByPot } from '../../utils/builtin
 import { formatDuration } from '../../utils/helpers';
 import type { TimerStore } from '../../stores/timer-store';
 import type { SettingStore } from '../../stores/setting-store';
+import type { CustomDataStore } from '../../stores/custom-data-store';
 
 const app = getApp<IAppOption>();
 
@@ -18,10 +19,9 @@ Page({
   allFoods: [] as Food[],
 
   onLoad() {
-    const categories = ['全部', '⭐ 收藏', ...getCategories()];
+    const categories = ['全部', '⭐ 收藏', ...getCategories(), '自定义'];
     this.setData({ categories });
     this.filter();
-    // 远端数据是异步拉取的，延迟多次刷新确保数据到位
     setTimeout(() => this.filter(), 500);
     setTimeout(() => this.filter(), 1500);
     setTimeout(() => this.filter(), 3000);
@@ -34,32 +34,31 @@ Page({
   filter() {
     const settingStore: SettingStore = app.globalData.settingStore;
     const timerStore: TimerStore = app.globalData.timerStore;
+    const customStore: CustomDataStore = app.globalData.customDataStore;
     const potId = timerStore ? timerStore.currentPotId : null;
 
-    // 每次filter都重新获取最新数据（兼容远端异步更新）
     this.allFoods = getAllFoods();
+    const customIds = new Set(customStore ? customStore.getCustomFoods().map((f: Food) => f.id) : []);
+
     let list = this.allFoods;
 
-    // 分类过滤
     if (this.data.currentCategory === '⭐ 收藏') {
       list = settingStore ? list.filter(f => settingStore.isFavorite(f.id)) : [];
+    } else if (this.data.currentCategory === '自定义') {
+      list = list.filter(f => customIds.has(f.id));
     } else if (this.data.currentCategory !== '全部') {
       list = list.filter(f => f.category === this.data.currentCategory);
     }
 
-    // 搜索过滤
     const search = this.data.searchText.trim();
     if (search) {
       list = list.filter(f => f.name.includes(search));
     }
 
-    // 按热度排序
     list = [...list].sort((a, b) => b.popularity - a.popularity);
 
-    // 视图层数据
     const timePreference = settingStore ? settingStore.settings.timePreference : 'recommended';
     const foods = list.map(f => {
-      // 根据时间偏好选择基础时间
       let baseTime: number;
       if (timePreference === 'min') baseTime = f.cookTime.min;
       else if (timePreference === 'max') baseTime = f.cookTime.max;
@@ -69,6 +68,7 @@ Page({
         ...f,
         recommendedText: formatDuration(adjusted),
         isFavorite: settingStore ? settingStore.isFavorite(f.id) : false,
+        isCustom: customIds.has(f.id),
       };
     });
 
@@ -103,6 +103,15 @@ Page({
     }
   },
 
+  /** 长按食材卡片 — 若是自定义食材则跳转编辑 */
+  onLongPressFood(e: any) {
+    const id = e.currentTarget.dataset.id;
+    const customStore: CustomDataStore = app.globalData.customDataStore;
+    if (customStore && customStore.getFoodById(id)) {
+      wx.navigateTo({ url: `/pages/custom-food/index?id=${id}` });
+    }
+  },
+
   onToggleFav(e: any) {
     const id = e.currentTarget.dataset.id;
     const settingStore: SettingStore = app.globalData.settingStore;
@@ -110,11 +119,14 @@ Page({
     this.filter();
   },
 
+  onAddCustomFood() {
+    wx.navigateTo({ url: '/pages/custom-food/index' });
+  },
+
   onBack() {
     wx.switchTab({ url: '/pages/home/index' });
   },
 
-  /** 远端数据加载完成时触发（由 app.ts fetchRemoteData 回调） */
   onRemoteDataLoaded() {
     this.filter();
   },

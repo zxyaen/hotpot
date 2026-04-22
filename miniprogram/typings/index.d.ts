@@ -7,6 +7,7 @@ interface IAppOption {
     timerStore: any;
     settingStore: any;
     roomStore: any;
+    customDataStore: any;
     foods?: any[];
     pots?: any[];
     categories?: string[];

@@ -5,7 +5,9 @@
     "pages/pot/index",
     "pages/room/index",
     "pages/history/index",
-    "pages/settings/index"
+    "pages/settings/index",
+    "pages/custom-food/index",
+    "pages/custom-pot/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

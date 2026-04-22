@@ -1,6 +1,15 @@
 /**
  * 内置食材库与锅底库（小程序内嵌，无需每次请求服务端）
+ * 合并优先级：用户自定义(localStorage) > 远端数据库 > 内置数据
  */
+import { CustomDataStore } from '../stores/custom-data-store';
+
+// 全局单例（由 app.ts 初始化后注入）
+let _customStore: CustomDataStore | null = null;
+
+export function setCustomDataStore(store: CustomDataStore) {
+  _customStore = store;
+}
 
 const FOODS: Food[] = [
   { id: 'mao_du', name: '毛肚', emoji: '🫀', category: '牛肉类', cookTime: { min: 8, recommended: 15, max: 20 }, tips: '七上八下，15秒脆嫩爽口', popularity: 98 },
@@ -79,18 +88,39 @@ export function updatePots(pots: Pot[]) {
 }
 
 export function getAllFoods(): Food[] {
-  return _foods;
+  if (!_customStore) return _foods;
+  const customFoods = _customStore.getCustomFoods();
+  if (customFoods.length === 0) return _foods;
+  // 自定义覆盖同 id，然后追加新的
+  const map = new Map<string, Food>();
+  _foods.forEach(f => map.set(f.id, f));
+  customFoods.forEach(f => map.set(f.id, f)); // 自定义优先
+  return Array.from(map.values());
 }
 
 export function getAllPots(): Pot[] {
-  return _pots;
+  if (!_customStore) return _pots;
+  const customPots = _customStore.getCustomPots();
+  if (customPots.length === 0) return _pots;
+  const map = new Map<string, Pot>();
+  _pots.forEach(p => map.set(p.id, p));
+  customPots.forEach(p => map.set(p.id, p)); // 自定义优先
+  return Array.from(map.values());
 }
 
 export function getFoodById(id: string): Food | undefined {
+  if (_customStore) {
+    const custom = _customStore.getFoodById(id);
+    if (custom) return custom;
+  }
   return _foods.find(f => f.id === id);
 }
 
 export function getPotById(id: string): Pot | undefined {
+  if (_customStore) {
+    const custom = _customStore.getPotById(id);
+    if (custom) return custom;
+  }
   return _pots.find(p => p.id === id);
 }
 

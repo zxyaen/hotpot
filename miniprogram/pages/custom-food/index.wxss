@@ -1,0 +1,163 @@
+.cf-page {
+  padding: 16rpx 24rpx 120rpx;
+  background: #FFF5E6;
+  min-height: 100vh;
+}
+
+.cf-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx 28rpx 8rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+}
+
+.cf-section-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #8B0000;
+  margin-bottom: 20rpx;
+  letter-spacing: 1rpx;
+}
+
+/* emoji 展示 */
+.emoji-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0 24rpx;
+  cursor: pointer;
+}
+.emoji-big {
+  font-size: 80rpx;
+  line-height: 1;
+}
+.emoji-hint {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-top: 8rpx;
+}
+
+/* emoji 选择器 */
+.emoji-picker {
+  background: #FFF5E6;
+  border-radius: 16rpx;
+  padding: 16rpx;
+  margin-bottom: 12rpx;
+}
+.emoji-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+.emoji-opt {
+  width: 72rpx;
+  height: 72rpx;
+  font-size: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  background: #fff;
+  border: 2rpx solid transparent;
+}
+.emoji-opt.active {
+  border-color: #C0392B;
+  background: #FFF0EE;
+}
+.emoji-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+.emoji-custom-input {
+  flex: 1;
+  background: #fff;
+  border-radius: 10rpx;
+  padding: 10rpx 16rpx;
+  font-size: 28rpx;
+  border: 1rpx solid #eee;
+}
+.emoji-custom-btn {
+  background: #C0392B;
+  color: #fff;
+  border-radius: 10rpx;
+  padding: 10rpx 24rpx;
+  font-size: 26rpx;
+}
+
+/* 表单行 */
+.cf-row {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #f5f0e8;
+}
+.cf-row:last-child {
+  border-bottom: none;
+}
+.cf-label {
+  width: 160rpx;
+  font-size: 28rpx;
+  color: #444;
+  flex-shrink: 0;
+}
+.cf-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #222;
+  background: transparent;
+}
+.cf-num {
+  width: 140rpx;
+  flex: none;
+}
+.cf-unit {
+  font-size: 26rpx;
+  color: #888;
+  margin-left: 8rpx;
+}
+.cf-picker {
+  font-size: 28rpx;
+  color: #C0392B;
+}
+
+.cf-hint {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-bottom: 8rpx;
+}
+
+/* 按钮区 */
+.cf-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 20rpx 32rpx 40rpx;
+  box-shadow: 0 -2rpx 16rpx rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.btn-save {
+  background: linear-gradient(135deg, #C0392B, #8B0000);
+  color: #fff;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  height: 90rpx;
+  line-height: 90rpx;
+  border: none;
+}
+.btn-delete {
+  background: transparent;
+  color: #C0392B;
+  border: 2rpx solid #C0392B;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+}

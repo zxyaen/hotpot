@@ -1,0 +1,75 @@
+<view class="cf-page">
+  <view class="cf-card">
+    <view class="cf-section-title">食材图标</view>
+    <view class="emoji-display" bindtap="onToggleEmojiPicker">
+      <text class="emoji-big">{{form.emoji}}</text>
+      <text class="emoji-hint">点击更换</text>
+    </view>
+
+    <!-- emoji 选择面板 -->
+    <view class="emoji-picker" wx:if="{{showEmojiPicker}}">
+      <view class="emoji-grid">
+        <view
+          class="emoji-opt {{form.emoji === item ? 'active' : ''}}"
+          wx:for="{{emojiOptions}}"
+          wx:key="*this"
+          data-emoji="{{item}}"
+          bindtap="onSelectEmoji"
+        >{{item}}</view>
+      </view>
+      <view class="emoji-custom-row">
+        <input
+          class="emoji-custom-input"
+          placeholder="或输入任意 emoji"
+          value="{{customEmoji}}"
+          bindinput="onInputCustomEmoji"
+          maxlength="2"
+        />
+        <view class="emoji-custom-btn" bindtap="onConfirmCustomEmoji">确认</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="cf-card">
+    <view class="cf-section-title">基本信息</view>
+    <view class="cf-row">
+      <text class="cf-label">名称 *</text>
+      <input class="cf-input" placeholder="例：手切羊肉" value="{{form.name}}" bindinput="onInputName" maxlength="10" />
+    </view>
+    <view class="cf-row">
+      <text class="cf-label">分类</text>
+      <picker mode="selector" range="{{categoryOptions}}" value="{{categoryOptions.indexOf(form.category)}}" bindchange="onSelectCategory">
+        <view class="cf-picker">{{form.category}} ▾</view>
+      </picker>
+    </view>
+    <view class="cf-row">
+      <text class="cf-label">小贴士</text>
+      <input class="cf-input" placeholder="可选，涮煮小技巧" value="{{form.tips}}" bindinput="onInputTips" maxlength="30" />
+    </view>
+  </view>
+
+  <view class="cf-card">
+    <view class="cf-section-title">涮煮时间（秒）</view>
+    <view class="cf-hint">提示：以秒为单位，如 15秒 填 15，2分钟 填 120</view>
+    <view class="cf-row">
+      <text class="cf-label">最短时间</text>
+      <input class="cf-input cf-num" type="number" placeholder="如 60" value="{{form.cookTimeMin}}" bindinput="onInputTimeMin" />
+      <text class="cf-unit">秒</text>
+    </view>
+    <view class="cf-row">
+      <text class="cf-label">推荐时间 *</text>
+      <input class="cf-input cf-num" type="number" placeholder="如 120" value="{{form.cookTimeRec}}" bindinput="onInputTimeRec" />
+      <text class="cf-unit">秒</text>
+    </view>
+    <view class="cf-row">
+      <text class="cf-label">最长时间</text>
+      <input class="cf-input cf-num" type="number" placeholder="如 180" value="{{form.cookTimeMax}}" bindinput="onInputTimeMax" />
+      <text class="cf-unit">秒</text>
+    </view>
+  </view>
+
+  <view class="cf-actions">
+    <button class="btn-save" bindtap="onSave">{{isEdit ? '保存修改' : '✓ 添加食材'}}</button>
+    <button class="btn-delete" wx:if="{{isEdit}}" bindtap="onDelete">删除此食材</button>
+  </view>
+</view>

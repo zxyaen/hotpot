@@ -1,0 +1,85 @@
+<view class="cp-page">
+  <!-- 预览卡片 -->
+  <view class="pot-preview" style="background: {{form.color}}">
+    <view class="preview-emoji">{{form.emoji}}</view>
+    <view class="preview-name">{{form.name || '锅底名称'}}</view>
+    <view class="preview-desc">{{form.description || '锅底描述'}}</view>
+  </view>
+
+  <view class="cp-card">
+    <view class="cp-section-title">图标 & 颜色</view>
+    <view class="cp-row">
+      <text class="cp-label">图标</text>
+      <view class="emoji-display-sm" bindtap="onToggleEmojiPicker">
+        <text class="emoji-sm">{{form.emoji}}</text>
+        <text class="change-hint">换一个 ▾</text>
+      </view>
+    </view>
+
+    <!-- emoji picker -->
+    <view class="emoji-picker" wx:if="{{showEmojiPicker}}">
+      <view class="emoji-grid">
+        <view class="emoji-opt {{form.emoji === item ? 'active' : ''}}"
+          wx:for="{{emojiOptions}}" wx:key="*this"
+          data-emoji="{{item}}" bindtap="onSelectEmoji">{{item}}</view>
+      </view>
+      <view class="emoji-custom-row">
+        <input class="emoji-custom-input" placeholder="或输入任意 emoji"
+          value="{{customEmoji}}" bindinput="onInputCustomEmoji" maxlength="2" />
+        <view class="emoji-custom-btn" bindtap="onConfirmCustomEmoji">确认</view>
+      </view>
+    </view>
+
+    <view class="cp-row">
+      <text class="cp-label">主题色</text>
+      <view class="color-swatch-cur" style="background:{{form.color}}" bindtap="onToggleColorPicker">
+        <text class="change-hint">换颜色 ▾</text>
+      </view>
+    </view>
+
+    <!-- color picker -->
+    <view class="color-picker" wx:if="{{showColorPicker}}">
+      <view class="color-grid">
+        <view class="color-dot {{form.color === item ? 'active' : ''}}"
+          wx:for="{{colorOptions}}" wx:key="*this"
+          style="background: {{item}}"
+          data-color="{{item}}" bindtap="onSelectColor" />
+      </view>
+    </view>
+  </view>
+
+  <view class="cp-card">
+    <view class="cp-section-title">基本信息</view>
+    <view class="cp-row">
+      <text class="cp-label">名称 *</text>
+      <input class="cp-input" placeholder="例：椰奶锅" value="{{form.name}}" bindinput="onInputName" maxlength="8" />
+    </view>
+    <view class="cp-row">
+      <text class="cp-label">描述</text>
+      <input class="cp-input" placeholder="可选，简短描述" value="{{form.description}}" bindinput="onInputDescription" maxlength="20" />
+    </view>
+  </view>
+
+  <view class="cp-card">
+    <view class="cp-section-title">温度参数</view>
+    <view class="cp-hint">时间系数影响食材涮煮时间：&lt;1 缩短，&gt;1 延长</view>
+    <view class="cp-row">
+      <text class="cp-label">沸腾温度</text>
+      <input class="cp-input cp-num" type="number" value="{{form.boilTemp}}" bindinput="onInputTemp" />
+      <text class="cp-unit">°C</text>
+    </view>
+    <view class="cp-row">
+      <text class="cp-label">时间系数</text>
+      <input class="cp-input cp-num" type="digit" value="{{timeFactorDisplay}}" bindinput="onInputTimeFactor" placeholder="0.9~1.1" />
+      <text class="cp-unit">×</text>
+    </view>
+    <view class="factor-examples">
+      <text>参考：清汤=1.0 · 麻辣=0.95 · 牛油=0.9</text>
+    </view>
+  </view>
+
+  <view class="cp-actions">
+    <button class="btn-save" bindtap="onSave">{{isEdit ? '保存修改' : '✓ 添加锅底'}}</button>
+    <button class="btn-delete" wx:if="{{isEdit}}" bindtap="onDelete">删除此锅底</button>
+  </view>
+</view>

@@ -4,18 +4,27 @@
 
   <view class="pot-grid">
     <view
-      class="pot-card {{currentPotId === item.id ? 'active' : ''}}"
+      class="pot-card {{currentPotId === item.id ? 'active' : ''}} {{item.isCustom ? 'custom-pot' : ''}}"
       wx:for="{{pots}}"
       wx:key="id"
       data-id="{{item.id}}"
       bindtap="onSelect"
+      bindlongpress="onLongPressPot"
       style="--pot-color: {{item.color}}"
     >
+      <view class="custom-pot-badge" wx:if="{{item.isCustom}}">自定义</view>
       <view class="pot-emoji-big">{{item.emoji}}</view>
       <view class="pot-name-big">{{item.name}}</view>
       <view class="pot-desc">{{item.description}}</view>
       <view class="pot-temp">🌡 {{item.boilTemp}}°C</view>
       <view class="pot-check" wx:if="{{currentPotId === item.id}}">✓ 已选择</view>
+    </view>
+
+    <!-- 添加自定义锅底 -->
+    <view class="pot-card add-pot-card" bindtap="onAddCustomPot">
+      <view class="pot-emoji-big">➕</view>
+      <view class="pot-name-big">自定义锅底</view>
+      <view class="pot-desc">添加我的锅底</view>
     </view>
   </view>
 </view>

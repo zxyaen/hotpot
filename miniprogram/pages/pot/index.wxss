@@ -57,3 +57,32 @@
   color: #27AE60;
   font-weight: 600;
 }
+
+/* 自定义锅底 */
+.custom-pot {
+  border: 3rpx dashed #C0392B !important;
+}
+.custom-pot-badge {
+  position: absolute;
+  top: 8rpx;
+  left: 8rpx;
+  font-size: 18rpx;
+  color: #C0392B;
+  background: #FFE5E5;
+  border-radius: 8rpx;
+  padding: 2rpx 8rpx;
+}
+.pot-card {
+  position: relative;
+}
+
+/* 添加自定义锅底卡片 */
+.add-pot-card {
+  border: 3rpx dashed #C0392B !important;
+  background: #FFF8F8 !important;
+  opacity: 0.8;
+}
+.add-pot-card .pot-name-big {
+  color: #C0392B;
+  font-size: 28rpx;
+}

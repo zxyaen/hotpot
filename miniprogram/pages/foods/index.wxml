@@ -25,16 +25,25 @@
   <!-- 食材网格 -->
   <view class="food-grid">
     <view class="food-item" wx:for="{{foods}}" wx:key="id">
-      <view class="food-card" data-id="{{item.id}}" bindtap="onTapFood">
+      <view class="food-card {{item.isCustom ? 'custom-food' : ''}}" data-id="{{item.id}}" bindtap="onTapFood" bindlongpress="onLongPressFood">
         <text
           class="fav-icon {{item.isFavorite ? 'active' : ''}}"
           data-id="{{item.id}}"
           catchtap="onToggleFav"
         >{{item.isFavorite ? '★' : '☆'}}</text>
+        <view class="custom-badge" wx:if="{{item.isCustom}}">自定义</view>
         <view class="food-emoji-big">{{item.emoji}}</view>
         <view class="food-name">{{item.name}}</view>
         <view class="food-time">⏱ {{item.recommendedText}}</view>
         <view class="food-tips">{{item.tips}}</view>
+      </view>
+    </view>
+    <!-- 添加自定义食材 -->
+    <view class="food-item">
+      <view class="food-card add-card" bindtap="onAddCustomFood">
+        <view class="food-emoji-big">➕</view>
+        <view class="food-name">自定义</view>
+        <view class="food-tips">添加食材</view>
       </view>
     </view>
   </view>

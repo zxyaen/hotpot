@@ -114,3 +114,35 @@
   margin-top: 40rpx;
   padding-bottom: 40rpx;
 }
+
+/* 自定义食材卡片样式 */
+.custom-food {
+  border: 2rpx dashed #C0392B !important;
+  background: #FFF8F8 !important;
+}
+.custom-badge {
+  position: absolute;
+  top: 8rpx;
+  left: 8rpx;
+  font-size: 18rpx;
+  color: #C0392B;
+  background: #FFE5E5;
+  border-radius: 8rpx;
+  padding: 2rpx 8rpx;
+  z-index: 2;
+}
+
+/* 添加自定义食材卡片 */
+.add-card {
+  border: 3rpx dashed #C0392B !important;
+  background: #FFF8F8 !important;
+  opacity: 0.8;
+}
+.add-card .food-emoji-big {
+  font-size: 60rpx;
+  color: #C0392B;
+}
+.add-card .food-name {
+  color: #C0392B;
+  font-weight: 600;
+}
