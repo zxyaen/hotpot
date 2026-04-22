@@ -7,15 +7,13 @@
       value="{{searchText}}"
       bindinput="onSearch"
     />
-    <view class="add-custom-btn" bindtap="onAddCustomFood">
-      <text class="add-custom-icon">➕</text>
-      <text class="add-custom-text">自定义</text>
-    </view>
   </view>
 
-  <!-- 分类Tab -->
+  <!-- 分类Tab + 自定义入口 -->
   <scroll-view scroll-x="true" class="cat-scroll" enhanced="true" show-scrollbar="{{false}}">
     <view class="cat-list">
+      <!-- 自定义入口放在最前面 -->
+      <view class="cat-item cat-item-custom" bindtap="onAddCustomFood">➕ 自定义</view>
       <view
         wx:for="{{categories}}"
         wx:key="*this"
