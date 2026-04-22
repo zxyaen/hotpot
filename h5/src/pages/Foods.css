@@ -176,3 +176,37 @@
   color: #BDC3C7;
   font-size: 14px;
 }
+
+/* 自定义食材：右上角编辑按钮 */
+.food-card-edit {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  font-size: 13px;
+  color: #C0392B;
+  background: rgba(192,57,43,0.1);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 2;
+}
+.food-card-edit:active { background: rgba(192,57,43,0.25); }
+
+/* 新增自定义食材卡片 */
+.food-card-add {
+  border: 2px dashed #E8D8D5;
+  background: #FFF8F7 !important;
+  box-shadow: none !important;
+}
+.food-card-add:active { background: #FFF0EE !important; }
+.food-card-add-icon {
+  font-size: 28px;
+  color: #C0392B;
+  line-height: 1;
+  font-weight: 300;
+}

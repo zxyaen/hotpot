@@ -52,24 +52,40 @@ export const POTS: Pot[] = [
 ];
 
 const CATEGORIES = ['牛肉类', '羊肉类', '海鲜类', '内脏类', '丸滑类', '豆制品', '主食类', '蔬菜类', '菌菇类'];
+const CUSTOM_CATEGORY = '自定义';
 
-let _foods: Food[] = [...FOODS];
-let _pots: Pot[] = [...POTS];
+// 懒加载 customDataStore，避免循环依赖
+let _customStore: { getCustomFoods(): Food[]; getCustomPots(): Pot[] } | null = null;
+export function setCustomStore(store: { getCustomFoods(): Food[]; getCustomPots(): Pot[] }) {
+  _customStore = store;
+}
 
-export function getAllFoods(): Food[] { return _foods; }
-export function getAllPots(): Pot[] { return _pots; }
-export function getCategories(): string[] { return CATEGORIES; }
+export function getAllFoods(): Food[] {
+  const custom = _customStore?.getCustomFoods() ?? [];
+  // 内置在前，自定义在后；自定义条目覆盖同 id 的内置条目
+  const builtinFiltered = FOODS.filter(f => !custom.find(c => c.id === f.id));
+  return [...builtinFiltered, ...custom];
+}
+
+export function getAllPots(): Pot[] {
+  const custom = _customStore?.getCustomPots() ?? [];
+  const builtinFiltered = POTS.filter(p => !custom.find(c => c.id === p.id));
+  return [...builtinFiltered, ...custom];
+}
+
+export function getCategories(): string[] {
+  const customFoods = _customStore?.getCustomFoods() ?? [];
+  const hasCustom = customFoods.some(f => f.category === CUSTOM_CATEGORY || !CATEGORIES.includes(f.category));
+  return hasCustom ? [...CATEGORIES, CUSTOM_CATEGORY] : CATEGORIES;
+}
 
 export function getFoodById(id: string): Food | undefined {
-  return _foods.find(f => f.id === id);
+  return getAllFoods().find(f => f.id === id);
 }
 
 export function getPotById(id: string): Pot | undefined {
-  return _pots.find(p => p.id === id);
+  return getAllPots().find(p => p.id === id);
 }
-
-export function updateFoods(foods: Food[]) { _foods = foods; }
-export function updatePots(pots: Pot[]) { _pots = pots; }
 
 export function adjustTimeByPot(baseSeconds: number, potId: string | null): number {
   if (!potId) return baseSeconds;

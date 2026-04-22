@@ -6,11 +6,14 @@ import { toast, alert } from '../utils/toast';
 import './Foods.css';
 
 export default function Foods() {
-  const { timerStore } = useApp();
+  const { timerStore, openSubPage, tick } = useApp();
+  // tick 用于触发重渲（自定义食材新增后刷新列表）
+  void tick;
+
   const [category, setCategory] = useState('全部');
   const [search, setSearch] = useState('');
-  // 点击动画：记录刚添加的食材id
   const [addedId, setAddedId] = useState<string | null>(null);
+
   const foods = getAllFoods();
   const categories = ['全部', ...getCategories()];
 
@@ -21,7 +24,6 @@ export default function Foods() {
   });
 
   async function handleAdd(foodId: string) {
-    // 未选锅底时弹提示
     if (!timerStore.currentPotId) {
       await alert('请先选择锅底', '不同锅底会影响涮煮时间，请先在计时页选择锅底 🥘', {
         confirmText: '去选择',
@@ -37,10 +39,14 @@ export default function Foods() {
     const food = foods.find(f => f.id === foodId);
     if (food) {
       toast(`${food.emoji} ${food.name} 下锅啦！`);
-      // 触发动画
       setAddedId(foodId);
       setTimeout(() => setAddedId(null), 600);
     }
+  }
+
+  // 判断是否为自定义食材
+  function isCustomFood(id: string) {
+    return id.startsWith('custom_');
   }
 
   return (
@@ -83,8 +89,22 @@ export default function Foods() {
             <span className="food-card-name">{food.name}</span>
             <span className="food-card-time">{formatDuration(food.cookTime.recommended)}</span>
             {addedId === food.id && <span className="food-card-check">✓</span>}
+            {/* 自定义食材：右上角显示编辑按钮 */}
+            {isCustomFood(food.id) && (
+              <span
+                className="food-card-edit"
+                onClick={e => { e.stopPropagation(); openSubPage({ type: 'custom-food', editId: food.id }); }}
+              >✎</span>
+            )}
           </div>
         ))}
+
+        {/* 新增自定义食材卡片 */}
+        <div className="food-card food-card-add" onClick={() => openSubPage({ type: 'custom-food' })}>
+          <span className="food-card-add-icon">＋</span>
+          <span className="food-card-name">自定义</span>
+        </div>
+
         {filtered.length === 0 && (
           <div className="foods-empty">暂无相关食材</div>
         )}

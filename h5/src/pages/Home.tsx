@@ -332,13 +332,16 @@ export default function Home() {
 }
 
 function PotList({ onClose }: { onClose: () => void }) {
-  const { timerStore } = useApp();
+  const { timerStore, openSubPage } = useApp();
   const pots = getAllPots();
   const [, forceUpdate] = useState(0);
   useEffect(() => {
     const unsub = timerStore.subscribe(() => forceUpdate(n => n + 1));
     return unsub;
   }, [timerStore]);
+
+  function isCustomPot(id: string) { return id.startsWith('cpot_'); }
+
   return (
     <div className="pot-picker-inner">
       <div className="popup-header">
@@ -358,8 +361,30 @@ function PotList({ onClose }: { onClose: () => void }) {
               <span className="pot-item-desc">{p.description} · {p.boilTemp}°C</span>
             </div>
             {timerStore.currentPotId === p.id && <span className="pot-check">✓</span>}
+            {/* 自定义锅底显示编辑按钮 */}
+            {isCustomPot(p.id) && (
+              <span
+                className="pot-edit-btn"
+                onClick={e => {
+                  e.stopPropagation();
+                  onClose();
+                  setTimeout(() => openSubPage({ type: 'custom-pot', editId: p.id }), 200);
+                }}
+              >✎</span>
+            )}
           </div>
         ))}
+        {/* 新增自定义锅底 */}
+        <div
+          className="pot-item pot-item-add"
+          onClick={() => { onClose(); setTimeout(() => openSubPage({ type: 'custom-pot' }), 200); }}
+        >
+          <span className="pot-item-emoji">➕</span>
+          <div className="pot-item-info">
+            <span className="pot-item-name">自定义锅底</span>
+            <span className="pot-item-desc">添加你的专属锅底</span>
+          </div>
+        </div>
       </div>
     </div>
   );
