@@ -22,6 +22,8 @@ Page({
     this.allFoods = getAllFoods();
     this.setData({ categories });
     this.filter();
+    // 兜底：100ms 后再刷新一次，确保 App store 已初始化
+    setTimeout(() => this.filter(), 100);
   },
 
   onShow() {
@@ -31,14 +33,13 @@ Page({
   filter() {
     const settingStore: SettingStore = app.globalData.settingStore;
     const timerStore: TimerStore = app.globalData.timerStore;
-    if (!settingStore || !timerStore) return;
-    const potId = timerStore.currentPotId;
+    const potId = timerStore ? timerStore.currentPotId : null;
 
     let list = this.allFoods;
 
     // 分类过滤
     if (this.data.currentCategory === '⭐ 收藏') {
-      list = list.filter(f => settingStore.isFavorite(f.id));
+      list = settingStore ? list.filter(f => settingStore.isFavorite(f.id)) : [];
     } else if (this.data.currentCategory !== '全部') {
       list = list.filter(f => f.category === this.data.currentCategory);
     }
@@ -58,7 +59,7 @@ Page({
       return {
         ...f,
         recommendedText: formatDuration(adjusted),
-        isFavorite: settingStore.isFavorite(f.id),
+        isFavorite: settingStore ? settingStore.isFavorite(f.id) : false,
       };
     });
 
