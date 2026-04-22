@@ -1,17 +1,96 @@
-/* App.css */
+/* ===== 全局 reset & 变量 ===== */
+:root {
+  --header-h: 52px;
+  --tabbar-h: 50px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --color-primary: #C0392B;
+  --color-primary-deep: #8B0000;
+  --color-primary-light: rgba(192,57,43,0.08);
+  --color-bg: #FFF5E6;
+  --color-card: #fff;
+  --color-text: #2C3E50;
+  --color-text-sub: #95A5A6;
+  --color-border: #F0E8E0;
+  --radius-card: 14px;
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.07);
+}
+
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
 button { font-family: inherit; }
 
-.app { display: flex; flex-direction: column; min-height: 100vh; max-width: 480px; margin: 0 auto; position: relative; background: #FFF5E6; }
-
-.app-header {
-  position: sticky; top: 0; z-index: 40;
-  background: linear-gradient(135deg, #E8432D 0%, #C0392B 100%);
-  padding: 14px 20px;
-  padding-top: calc(14px + env(safe-area-inset-top));
-  box-shadow: 0 2px 8px rgba(192,57,43,0.3);
+/* ===== 应用根布局 ===== */
+.app-root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-bg);
+  /* 在桌面端加个阴影区分边界 */
+  box-shadow: 0 0 40px rgba(0,0,0,0.12);
 }
-.app-header-title { font-size: 20px; font-weight: 700; color: #fff; }
 
-.app-content { flex: 1; overflow-y: auto; padding-bottom: 60px; }
+/* ===== 固定顶部 Header ===== */
+.app-header {
+  flex-shrink: 0;
+  height: calc(var(--header-h) + var(--safe-top));
+  padding-top: var(--safe-top);
+  background: linear-gradient(135deg, #E8432D 0%, #C0392B 100%);
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-shadow: 0 2px 8px rgba(192,57,43,0.3);
+  z-index: 100;
+  position: relative;
+}
+
+.app-header-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #fff;
+  flex: 1;
+}
+
+.header-badge {
+  background: #fff;
+  color: #C0392B;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+/* ===== 可滚动内容区 ===== */
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* 底部留出 tabbar 空间 */
+  padding-bottom: calc(var(--tabbar-h) + var(--safe-bottom));
+}
+
+/* ===== Vant 组件覆盖 ===== */
+.van-dialog__confirm {
+  color: var(--color-primary) !important;
+}
+.van-toast {
+  max-width: 80%;
+}

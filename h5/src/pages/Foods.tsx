@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { getAllFoods, getCategories } from '../utils/builtinData';
 import { formatDuration } from '../utils/helpers';
+import { toast } from '../utils/toast';
 import './Foods.css';
 
 export default function Foods() {
@@ -19,23 +20,14 @@ export default function Foods() {
 
   function handleAdd(foodId: string) {
     const timer = timerStore.addTimer(foodId);
-    if (timer) {
-      // 简单通知
-      const food = foods.find(f => f.id === foodId);
-      if (food) {
-        const toast = document.createElement('div');
-        toast.className = 'food-toast';
-        toast.textContent = `${food.emoji} 已开始计时`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
-      }
-    }
+    const food = foods.find(f => f.id === foodId);
+    if (timer && food) toast(`${food.emoji} ${food.name} 开始计时`);
   }
 
   return (
     <div className="foods-page">
-      {/* 搜索 */}
-      <div className="search-bar">
+      {/* 搜索框 */}
+      <div className="foods-search">
         <span className="search-icon">🔍</span>
         <input
           className="search-input"
@@ -43,15 +35,18 @@ export default function Foods() {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+        {search && <span className="search-clear" onClick={() => setSearch('')}>✕</span>}
       </div>
 
       {/* 分类 */}
-      <div className="cats-scroll">
-        <div className="cats-row">
+      <div className="foods-cats">
+        <div className="foods-cat-row">
           {categories.map(cat => (
-            <button key={cat} className={`cat-chip ${category === cat ? 'active' : ''}`} onClick={() => setCategory(cat)}>
-              {cat}
-            </button>
+            <button
+              key={cat}
+              className={`cat-chip ${category === cat ? 'active' : ''}`}
+              onClick={() => setCategory(cat)}
+            >{cat}</button>
           ))}
         </div>
       </div>
@@ -60,25 +55,21 @@ export default function Foods() {
       <div className="foods-list">
         {filtered.map(food => (
           <div key={food.id} className="food-card">
-            <div className="food-card-left">
-              <span className="food-card-emoji">{food.emoji}</span>
-              <div className="food-card-info">
-                <span className="food-card-name">{food.name}</span>
-                <span className="food-card-cat">{food.category}</span>
-                <span className="food-card-tips">{food.tips}</span>
-              </div>
+            <span className="food-card-emoji">{food.emoji}</span>
+            <div className="food-card-info">
+              <span className="food-card-name">{food.name}</span>
+              <span className="food-card-cat">{food.category}</span>
+              <span className="food-card-tips">{food.tips}</span>
             </div>
             <div className="food-card-right">
-              <div className="food-time-row">
-                <span className="food-time-label">推荐</span>
-                <span className="food-time-value">{formatDuration(food.cookTime.recommended)}</span>
-              </div>
-              <button className="btn-start-timer" onClick={() => handleAdd(food.id)}>
-                计时
-              </button>
+              <span className="food-card-time">{formatDuration(food.cookTime.recommended)}</span>
+              <button className="btn-time" onClick={() => handleAdd(food.id)}>计时</button>
             </div>
           </div>
         ))}
+        {filtered.length === 0 && (
+          <div className="foods-empty">暂无相关食材</div>
+        )}
       </div>
     </div>
   );

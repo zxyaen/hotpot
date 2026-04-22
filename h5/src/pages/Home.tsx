@@ -1,27 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Popup } from 'react-vant';
 import { useApp } from '../context/AppContext';
 import { TimerItem } from '../types';
 import { formatCountdown, formatDuration } from '../utils/helpers';
-import { getPotById } from '../utils/builtinData';
+import { getPotById, getAllPots } from '../utils/builtinData';
+import { confirm, toast, toastSuccess } from '../utils/toast';
 import FoodPicker from '../components/FoodPicker';
 import AlertModal from '../components/AlertModal';
 import './Home.css';
 
-interface TimerView extends TimerItem {
-  remaining: number;
-  remainingText: string;
-  progressPercent: number;
-  totalText: string;
-  elapsedText: string;
-  isOver: boolean;
-  urgencyClass: string;
-  statusText: string;
-  statusClass: string;
-  isSelected: boolean;
-}
-
 export default function Home() {
-  const { timerStore, tick } = useApp();
+  const { timerStore } = useApp();
+  const [, forceUpdate] = useState(0);
   const [showFoodPicker, setShowFoodPicker] = useState(false);
   const [showPotPicker, setShowPotPicker] = useState(false);
   const [batchMode, setBatchMode] = useState(false);
@@ -29,15 +19,14 @@ export default function Home() {
   const [alertTimer, setAlertTimer] = useState<TimerItem | null>(null);
 
   useEffect(() => {
-    const unsub = timerStore.onTimerEnd((timer) => {
-      setAlertTimer(timer);
-    });
-    return unsub;
+    const unsub1 = timerStore.subscribe(() => forceUpdate(n => n + 1));
+    const unsub2 = timerStore.onTimerEnd((timer) => setAlertTimer(timer));
+    return () => { unsub1(); unsub2(); };
   }, [timerStore]);
 
   const pot = timerStore.currentPotId ? getPotById(timerStore.currentPotId) : null;
 
-  const timersView: TimerView[] = timerStore.timers.map(t => {
+  const timersView = timerStore.timers.map(t => {
     const remaining = timerStore.getRemaining(t);
     const total = t.duration;
     const elapsed = total - remaining;
@@ -47,7 +36,6 @@ export default function Home() {
       isOver ? 'status-over' :
       t.status !== 'running' ? '' :
       remaining > total * 0.4 ? 'urgency-safe' : 'urgency-warn';
-
     return {
       ...t, remaining, remainingText: formatCountdown(remaining),
       progressPercent: progress,
@@ -74,36 +62,39 @@ export default function Home() {
     if (status !== 'running' || isOver) return;
     setSelectedIds(prev => {
       const idx = prev.indexOf(id);
-      if (idx >= 0) return prev.filter(x => x !== id);
-      return [...prev, id];
+      return idx >= 0 ? prev.filter(x => x !== id) : [...prev, id];
     });
   }
 
-  function handleBatchCancel() {
+  async function handleBatchCancel() {
     if (selectedIds.length === 0) return;
-    if (window.confirm(`确定取消 ${selectedIds.length} 个正在计时的食材？`)) {
+    const ok = await confirm('批量取消计时', `确定取消 ${selectedIds.length} 个正在计时的食材？`);
+    if (ok) {
       selectedIds.forEach(id => timerStore.cancelTimer(id));
+      toast(`已取消 ${selectedIds.length} 个`);
       setBatchMode(false);
       setSelectedIds([]);
     }
   }
 
-  function handleClearAll() {
-    if (window.confirm('将保存到历史记录并清空当前列表')) {
+  async function handleCancelTimer(id: string) {
+    const ok = await confirm('取消计时', '确定要取消这个计时吗？');
+    if (ok) timerStore.cancelTimer(id);
+  }
+
+  async function handleClearAll() {
+    const ok = await confirm('结束本次涮火锅', '将保存到历史记录并清空当前列表');
+    if (ok) {
       timerStore.clearAll();
+      toastSuccess('已保存到历史');
       setBatchMode(false);
       setSelectedIds([]);
     }
-  }
-
-  function handleAlertConfirm() {
-    if (alertTimer) timerStore.completeTimer(alertTimer.id);
-    setAlertTimer(null);
   }
 
   return (
     <div className="home-page">
-      {/* 锅底选择 */}
+      {/* 锅底选择卡 */}
       <div className="pot-selector card" onClick={() => setShowPotPicker(true)}>
         <div className="pot-info">
           <span className="pot-emoji">{pot?.emoji || '🥘'}</span>
@@ -123,7 +114,7 @@ export default function Home() {
           <span className="status-num">{timerStore.runningCount}</span>
           <span className="status-label">涮煮中</span>
         </div>
-        <div className="status-divider"></div>
+        <div className="status-divider" />
         <div className="status-item">
           <span className="status-num">{timerStore.timers.length}</span>
           <span className="status-label">总计时</span>
@@ -133,11 +124,11 @@ export default function Home() {
       {/* 批量工具栏 */}
       {batchMode && (
         <div className="batch-toolbar">
-          <div className="batch-count">
+          <span className="batch-count">
             {selectedIds.length > 0 ? `已选 ${selectedIds.length} 个` : '点击卡片选择'}
-          </div>
+          </span>
           <div className="batch-actions">
-            <button className="batch-btn batch-select-all" onClick={() => {
+            <button className="batch-btn" onClick={() => {
               const runIds = runningTimers.map(t => t.id);
               setSelectedIds(selectedIds.length === runIds.length ? [] : runIds);
             }}>
@@ -157,9 +148,14 @@ export default function Home() {
           {timersView.map(item => (
             <div
               key={item.id}
-              className={`timer-card ${item.statusClass} ${item.urgencyClass} ${batchMode && item.status === 'running' && !item.isOver ? 'batch-selectable' : ''} ${item.isSelected ? 'batch-selected' : ''}`}
+              className={[
+                'timer-card', item.statusClass, item.urgencyClass,
+                batchMode && item.status === 'running' && !item.isOver ? 'batch-selectable' : '',
+                item.isSelected ? 'batch-selected' : '',
+              ].filter(Boolean).join(' ')}
               onClick={() => handleCardTap(item.id, item.status, item.isOver)}
             >
+              {/* 多选勾选 */}
               {batchMode && item.status === 'running' && !item.isOver && (
                 <div className="select-check">
                   <div className={`check-circle ${item.isSelected ? 'checked' : ''}`}>
@@ -168,29 +164,37 @@ export default function Home() {
                 </div>
               )}
 
+              {/* 顶部区域 */}
               <div className="timer-top">
                 <div className="timer-food">
                   <span className="food-emoji">{item.foodEmoji}</span>
                   <div className="food-info">
                     <span className="food-name">{item.foodName}</span>
-                    <div className={`status-tag ${item.statusClass} ${item.urgencyClass}`}>{item.statusText}</div>
+                    <span className={`status-tag ${item.statusClass} ${item.urgencyClass}`}>
+                      {item.statusText}
+                    </span>
                   </div>
                 </div>
                 {item.status === 'running' && !item.isOver ? (
                   <div className={`timer-countdown ${item.urgencyClass}`}>{item.remainingText}</div>
                 ) : item.isOver ? (
-                  <div className="timer-countdown status-over">🔔</div>
+                  <div className="timer-countdown status-over blink">🔔</div>
                 ) : (
                   <div className="timer-countdown status-done">✓</div>
                 )}
               </div>
 
+              {/* 进度条 */}
               {item.status === 'running' && (
                 <div className="progress-bar">
-                  <div className={`progress-fill ${item.urgencyClass} ${item.isOver ? 'status-over' : ''}`} style={{ width: `${item.progressPercent}%` }}></div>
+                  <div
+                    className={`progress-fill ${item.urgencyClass} ${item.isOver ? 'status-over' : ''}`}
+                    style={{ width: `${item.progressPercent}%` }}
+                  />
                 </div>
               )}
 
+              {/* 时间元信息 */}
               <div className="timer-meta">
                 {item.status === 'running' && !item.isOver ? (
                   <span className="meta-text">推荐 {item.totalText} · 已入锅 {item.elapsedText}</span>
@@ -201,14 +205,21 @@ export default function Home() {
                 )}
               </div>
 
+              {/* 操作按钮 */}
               {!batchMode && (
                 <div className="timer-actions">
                   {item.status === 'running' && !item.isOver ? (
-                    <button className="btn-mini btn-cancel" onClick={e => { e.stopPropagation(); if (window.confirm('确定要取消这个计时吗？')) timerStore.cancelTimer(item.id); }}>取消</button>
+                    <button className="btn-mini btn-cancel" onClick={e => { e.stopPropagation(); handleCancelTimer(item.id); }}>
+                      取消
+                    </button>
                   ) : item.isOver ? (
-                    <button className="btn-mini btn-confirm" onClick={e => { e.stopPropagation(); timerStore.completeTimer(item.id); }}>✓ 我已捞出</button>
+                    <button className="btn-mini btn-confirm" onClick={e => { e.stopPropagation(); timerStore.completeTimer(item.id); }}>
+                      ✓ 我已捞出
+                    </button>
                   ) : (
-                    <button className="btn-mini btn-remove" onClick={e => { e.stopPropagation(); timerStore.removeTimer(item.id); }}>移除</button>
+                    <button className="btn-mini btn-remove" onClick={e => { e.stopPropagation(); timerStore.removeTimer(item.id); }}>
+                      移除
+                    </button>
                   )}
                 </div>
               )}
@@ -223,12 +234,12 @@ export default function Home() {
         </div>
       )}
 
-      {/* 底部操作栏 */}
+      {/* 底部操作区（固定在 tabbar 上方） */}
       <div className="bottom-actions">
         {batchMode ? (
-          <div className="batch-exit-row">
-            <button className="btn-batch-exit" onClick={() => { setBatchMode(false); setSelectedIds([]); }}>完成</button>
-          </div>
+          <button className="btn-batch-exit" onClick={() => { setBatchMode(false); setSelectedIds([]); }}>
+            完成
+          </button>
         ) : (
           <>
             <button className="btn-add-food" onClick={() => setShowFoodPicker(true)}>
@@ -239,7 +250,9 @@ export default function Home() {
               <div className="bottom-secondary">
                 <button className="link" onClick={() => timerStore.clearFinished()}>清除已完成</button>
                 {timerStore.runningCount > 0 && (
-                  <button className="link batch-link" onClick={() => { setBatchMode(true); setSelectedIds([]); }}>批量取消</button>
+                  <button className="link batch-link" onClick={() => { setBatchMode(true); setSelectedIds([]); }}>
+                    批量取消
+                  </button>
                 )}
                 <button className="link danger" onClick={handleClearAll}>结束本次</button>
               </div>
@@ -248,60 +261,52 @@ export default function Home() {
         )}
       </div>
 
-      {/* 食材选择 */}
-      {showFoodPicker && (
-        <FoodPicker
-          onSelect={(foodId) => {
-            timerStore.addTimer(foodId);
-          }}
-          onClose={() => setShowFoodPicker(false)}
-        />
-      )}
+      {/* 食材选择 Popup */}
+      <FoodPicker visible={showFoodPicker} onSelect={foodId => timerStore.addTimer(foodId)} onClose={() => setShowFoodPicker(false)} />
 
-      {/* 锅底选择弹窗 */}
-      {showPotPicker && <PotPicker onClose={() => setShowPotPicker(false)} />}
+      {/* 锅底选择 Popup */}
+      <Popup position="bottom" visible={showPotPicker} onClose={() => setShowPotPicker(false)} round style={{ height: '55vh' }}>
+        <PotList onClose={() => setShowPotPicker(false)} />
+      </Popup>
 
-      {/* 到时提醒 */}
+      {/* 到时提醒弹窗 */}
       {alertTimer && (
         <AlertModal
           emoji={alertTimer.foodEmoji}
           title={`${alertTimer.foodName} 好啦！`}
           subtitle="🔔 快捞出来吧，别糊啦~"
           onClose={() => setAlertTimer(null)}
-          onConfirm={handleAlertConfirm}
+          onConfirm={() => { timerStore.completeTimer(alertTimer.id); setAlertTimer(null); }}
         />
       )}
     </div>
   );
 }
 
-function PotPicker({ onClose }: { onClose: () => void }) {
+function PotList({ onClose }: { onClose: () => void }) {
   const { timerStore } = useApp();
-  const { getAllPots } = require('../utils/builtinData');
   const pots = getAllPots();
   return (
-    <div className="modal-mask" onClick={onClose}>
-      <div className="pot-picker-box" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <span className="modal-title">选择锅底</span>
-          <span className="modal-close" onClick={onClose}>✕</span>
-        </div>
-        <div className="pot-list">
-          {pots.map((p: any) => (
-            <div
-              key={p.id}
-              className={`pot-item ${timerStore.currentPotId === p.id ? 'active' : ''}`}
-              onClick={() => { timerStore.setPot(p.id); onClose(); }}
-            >
-              <span className="pot-item-emoji">{p.emoji}</span>
-              <div className="pot-item-info">
-                <span className="pot-item-name">{p.name}</span>
-                <span className="pot-item-desc">{p.description}</span>
-              </div>
-              {timerStore.currentPotId === p.id && <span className="pot-check">✓</span>}
+    <div className="pot-picker-inner">
+      <div className="popup-header">
+        <span className="popup-title">选择锅底</span>
+        <span className="popup-close" onClick={onClose}>✕</span>
+      </div>
+      <div className="pot-list">
+        {pots.map(p => (
+          <div
+            key={p.id}
+            className={`pot-item ${timerStore.currentPotId === p.id ? 'active' : ''}`}
+            onClick={() => { timerStore.setPot(p.id); onClose(); }}
+          >
+            <span className="pot-item-emoji">{p.emoji}</span>
+            <div className="pot-item-info">
+              <span className="pot-item-name">{p.name}</span>
+              <span className="pot-item-desc">{p.description} · {p.boilTemp}°C</span>
             </div>
-          ))}
-        </div>
+            {timerStore.currentPotId === p.id && <span className="pot-check">✓</span>}
+          </div>
+        ))}
       </div>
     </div>
   );

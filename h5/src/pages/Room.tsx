@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { Popup } from 'react-vant';
 import { useApp } from '../context/AppContext';
 import { RoomTimer } from '../types';
 import { formatCountdown } from '../utils/helpers';
 import { getAllFoods, getCategories, getPotById, adjustTimeByPot, getAllPots } from '../utils/builtinData';
+import { confirm, toast, toastSuccess, toastLoading, closeToast } from '../utils/toast';
 import AlertModal from '../components/AlertModal';
 import './Room.css';
 
 const AVATARS = ['🍲', '🔥', '🥩', '🦐', '🥬', '🍄', '🫕', '🤤'];
 
 export default function Room() {
-  const { roomStore, tick } = useApp();
+  const { roomStore } = useApp();
+  const [, forceUpdate] = useState(0);
   const [nickname, setNickname] = useState(() => localStorage.getItem('room_nickname') || '');
   const [avatar, setAvatar] = useState(() => localStorage.getItem('room_avatar') || '🍲');
   const [joinCode, setJoinCode] = useState('');
@@ -22,15 +25,15 @@ export default function Room() {
   const [wsUrl, setWsUrl] = useState(() => roomStore.getWsUrl());
 
   useEffect(() => {
-    const unsub = roomStore.onTimerEnd((timer) => setAlertTimer(timer as any));
-    return unsub;
+    const unsub1 = roomStore.subscribe(() => forceUpdate(n => n + 1));
+    const unsub2 = roomStore.onTimerEnd((timer) => setAlertTimer(timer as any));
+    return () => { unsub1(); unsub2(); };
   }, [roomStore]);
 
   const isInRoom = roomStore.isInRoom;
   const room = roomStore.currentRoom;
   const pot = room?.potId ? getPotById(room.potId) : null;
 
-  // 计时列表视图
   const timersView = roomStore.roomTimers.map(t => {
     const remaining = roomStore.getRemaining(t);
     const total = t.duration;
@@ -58,34 +61,43 @@ export default function Room() {
   });
 
   async function handleCreate() {
-    if (!nickname.trim()) { alert('请输入昵称'); return; }
+    if (!nickname.trim()) { toast('请输入昵称'); return; }
     setConnecting(true);
+    toastLoading('创建中...');
     localStorage.setItem('room_nickname', nickname);
     localStorage.setItem('room_avatar', avatar);
     try {
       await roomStore.createRoom(nickname.trim(), avatar);
     } catch (e: any) {
-      alert(e.message || '创建失败');
-    } finally { setConnecting(false); }
+      closeToast();
+      toast(e.message || '创建失败');
+    } finally {
+      closeToast();
+      setConnecting(false);
+    }
   }
 
   async function handleJoin() {
-    if (!nickname.trim()) { alert('请输入昵称'); return; }
-    if (joinCode.length < 4) { alert('请输入4位房间码'); return; }
+    if (!nickname.trim()) { toast('请输入昵称'); return; }
+    if (joinCode.length < 4) { toast('请输入4位房间码'); return; }
     setConnecting(true);
+    toastLoading('加入中...');
     localStorage.setItem('room_nickname', nickname);
     localStorage.setItem('room_avatar', avatar);
     try {
       await roomStore.joinRoom(joinCode.trim(), nickname.trim(), avatar);
     } catch (e: any) {
-      alert(e.message || '加入失败');
-    } finally { setConnecting(false); }
+      closeToast();
+      toast(e.message || '加入失败');
+    } finally {
+      closeToast();
+      setConnecting(false);
+    }
   }
 
-  function handleLeave() {
-    if (window.confirm('确认离开当前房间？')) {
-      roomStore.leaveRoom();
-    }
+  async function handleLeave() {
+    const ok = await confirm('离开房间', '确认离开当前房间？');
+    if (ok) roomStore.leaveRoom();
   }
 
   function handleAddFood(foodId: string) {
@@ -94,35 +106,51 @@ export default function Room() {
     const potId = roomStore.currentRoom?.potId || null;
     const duration = adjustTimeByPot(food.cookTime.recommended, potId);
     roomStore.addTimer(food.id, food.name, food.emoji, duration);
+    toast(`${food.emoji} 已开始计时`);
   }
 
-  // 大厅视图
+  async function handleCancelTimer(id: string) {
+    const ok = await confirm('取消计时', '确认取消这个计时？');
+    if (ok) roomStore.updateTimer(id, 'cancelled');
+  }
+
+  function handleCopyCode() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(room!.code);
+    }
+    toastSuccess('房间码已复制');
+  }
+
+  // ═══ 大厅视图 ═══
   if (!isInRoom) {
     return (
-      <div className="room-page">
-        {/* Hero */}
+      <div className="room-lobby">
         <div className="lobby-hero">
           <span className="hero-icon">🍜</span>
           <span className="hero-title">多人同桌同步</span>
-          <span className="hero-subtitle">同桌朋友都能看到同一锅的{'\n'}所有食材计时，一起吃最完美！</span>
+          <span className="hero-subtitle">同桌朋友都能看到同一锅的所有食材计时，一起吃最完美！</span>
         </div>
 
         {/* 我的信息 */}
-        <div className="section-card info-card">
-          <div className="section-card-head">
-            <div className="card-icon-wrap card-icon-me">👤</div>
+        <div className="lobby-card">
+          <div className="lobby-card-head">
+            <div className="lobby-card-icon">👤</div>
             <div>
-              <span className="section-card-title">我的信息</span>
-              <span className="section-card-desc">选个头像，设置昵称</span>
+              <div className="lobby-card-title">我的信息</div>
+              <div className="lobby-card-desc">选个头像，设置昵称</div>
             </div>
           </div>
           <div className="avatar-row">
             {AVATARS.map(em => (
-              <button key={em} className={`avatar-item ${avatar === em ? 'avatar-active' : ''}`} onClick={() => setAvatar(em)}>{em}</button>
+              <button
+                key={em}
+                className={`avatar-btn ${avatar === em ? 'active' : ''}`}
+                onClick={() => setAvatar(em)}
+              >{em}</button>
             ))}
           </div>
           <input
-            className="room-input"
+            className="lobby-input"
             placeholder="输入昵称（最多8字）"
             maxLength={8}
             value={nickname}
@@ -131,146 +159,156 @@ export default function Room() {
         </div>
 
         {/* 创建房间 */}
-        <div className="section-card create-card">
-          <div className="section-card-head">
-            <div className="card-icon-wrap card-icon-create">🔥</div>
+        <div className="lobby-card create-card">
+          <div className="lobby-card-head">
+            <div className="lobby-card-icon">🔥</div>
             <div>
-              <span className="section-card-title">开一个新锅</span>
-              <span className="section-card-desc">创建房间，邀请同桌加入</span>
+              <div className="lobby-card-title">开一个新锅</div>
+              <div className="lobby-card-desc">创建房间，邀请同桌加入</div>
             </div>
           </div>
           <button className="btn-create" disabled={connecting} onClick={handleCreate}>
-            {connecting ? '连接中...' : '🔥 创建房间'}
+            🔥 创建房间
           </button>
         </div>
 
         {/* 加入房间 */}
-        <div className="section-card join-card">
-          <div className="section-card-head">
-            <div className="card-icon-wrap card-icon-join">🚀</div>
+        <div className="lobby-card">
+          <div className="lobby-card-head">
+            <div className="lobby-card-icon">🚀</div>
             <div>
-              <span className="section-card-title">加入已有的锅</span>
-              <span className="section-card-desc">输入4位房间码加入</span>
+              <div className="lobby-card-title">加入已有的锅</div>
+              <div className="lobby-card-desc">输入4位房间码加入</div>
             </div>
           </div>
-          <div className="join-input-row">
+          <div className="join-row">
             <input
-              className="room-input input-code"
-              placeholder="输入4位房间码"
+              className="lobby-input code-input"
+              placeholder="输入房间码"
               maxLength={4}
               value={joinCode}
+              inputMode="numeric"
               onChange={e => setJoinCode(e.target.value.replace(/\D/g, ''))}
             />
-            <button className="btn-join" disabled={connecting} onClick={handleJoin}>
-              {connecting ? '...' : '加入'}
-            </button>
+            <button className="btn-join" disabled={connecting} onClick={handleJoin}>加入</button>
           </div>
         </div>
 
         {/* 功能介绍 */}
-        <div className="section-card feature-card">
-          <span className="feature-title">✨ 同步功能介绍</span>
+        <div className="lobby-card feature-card">
+          <div className="feature-title">✨ 同步功能介绍</div>
           {[
-            ['01', '实时同步：', '任何人添加食材、计时结束，同桌所有设备同步更新'],
-            ['02', '共享看板：', '统一视图，谁下的什么料一目了然，不会搞混'],
-            ['03', '所有人提醒：', '时间到时桌上所有设备同时响，抢着捞才好玩'],
-            ['04', '无需登录：', '临时房间，吃完自动解散，保护隐私'],
+            ['01', '实时同步', '任何人添加食材、计时结束，同桌所有手机同步更新'],
+            ['02', '共享看板', '统一视图，谁下的什么料一目了然，不会搞混'],
+            ['03', '所有人提醒', '时间到时桌上所有手机同时响，抢着捞才好玩'],
+            ['04', '无需登录', '临时房间，吃完自动解散，保护隐私'],
           ].map(([num, label, text]) => (
             <div key={num} className="feature-item">
               <span className="feature-num">{num}</span>
-              <span className="feature-text"><strong>{label}</strong>{text}</span>
+              <span className="feature-text"><strong>{label}：</strong>{text}</span>
             </div>
           ))}
         </div>
 
         {/* 服务器设置 */}
-        <div className="settings-toggle" onClick={() => setShowSettings(!showSettings)}>
+        <div className="settings-toggle" onClick={() => setShowSettings(v => !v)}>
           <span>⚙️ 服务器设置</span>
           <span>{showSettings ? '▲' : '▼'}</span>
         </div>
         {showSettings && (
-          <div className="section-card settings-card">
-            <span className="section-card-title">WebSocket 服务器地址</span>
+          <div className="lobby-card">
+            <div className="lobby-card-title" style={{ marginBottom: 10 }}>WebSocket 服务器地址</div>
             <input
-              className="room-input"
+              className="lobby-input"
               placeholder="wss://your-server/ws"
               value={wsUrl}
               onChange={e => setWsUrl(e.target.value)}
             />
-            <button className="btn-ghost-sm" onClick={() => { roomStore.setWsUrl(wsUrl); setShowSettings(false); }}>保存</button>
+            <button
+              className="btn-ghost-sm"
+              onClick={() => { roomStore.setWsUrl(wsUrl); setShowSettings(false); toastSuccess('已保存'); }}
+            >保存</button>
           </div>
         )}
       </div>
     );
   }
 
-  // 房间视图
+  // ═══ 房间视图 ═══
   return (
-    <div className="room-wrap">
-      {/* 顶部 */}
+    <div className="room-view">
+      {/* 房间状态头 */}
       <div className="room-header">
-        <div className="room-code-block">
+        <div className="room-code-block" onClick={handleCopyCode}>
           <span className="room-label">房间码</span>
-          <span className="room-code" onClick={() => { navigator.clipboard?.writeText(room!.code); }}>
-            {room?.code} 📋
-          </span>
+          <span className="room-code">{room?.code} 📋</span>
         </div>
         <div className="room-pot-block">
-          <span className="room-pot-emoji">{pot?.emoji || '🍲'}</span>
-          <span className="room-pot-name">{pot?.name || '未选择'}</span>
+          <span className="rph-pot-emoji">{pot?.emoji || '🍲'}</span>
+          <span className="rph-pot-name">{pot?.name || '未选择'}</span>
           {roomStore.isHost && (
-            <span className="pot-change" onClick={() => setShowPotModal(true)}>换</span>
+            <span className="pot-change-btn" onClick={() => setShowPotModal(true)}>换</span>
           )}
         </div>
-        <div className={`ws-dot ${roomStore.wsState}`}></div>
+        <div className={`ws-dot ${roomStore.wsState}`} />
       </div>
 
-      {/* 成员 */}
+      {/* 成员栏 */}
       <div className="members-row">
         {roomStore.members.map(m => (
-          <div key={m.id} className={`member-item ${m.online ? '' : 'member-offline'}`}>
+          <div key={m.id} className={`member-item ${m.online ? '' : 'offline'}`}>
             <span className="member-avatar">{m.avatar}</span>
             <span className="member-name">{m.nickname}{m.isHost ? '👑' : ''}</span>
-            <div className={`member-dot ${m.online ? 'online' : 'offline'}`}></div>
+            <div className={`member-dot ${m.online ? 'online' : 'offline'}`} />
           </div>
         ))}
       </div>
 
-      {/* 计时区 */}
-      <div className="timer-section">
-        <div className="timer-section-header">
-          <span className="section-title">🍢 进行中 ({timersView.filter(t => t.status === 'running').length})</span>
-          <button className="btn-add-food-room" onClick={() => setShowFoodModal(true)}>+ 加食材</button>
+      {/* 计时器列表 */}
+      <div className="room-timer-section">
+        <div className="rts-header">
+          <span className="rts-title">🍢 进行中 ({timersView.filter(t => t.status === 'running').length})</span>
+          <button className="btn-add-room" onClick={() => setShowFoodModal(true)}>+ 加食材</button>
         </div>
 
         {timersView.length === 0 ? (
-          <div className="empty-tip">还没有食材在涮，点击「加食材」开始</div>
+          <div className="room-empty">还没有食材在涮，点击「加食材」开始</div>
         ) : (
           timersView.map(item => (
-            <div key={item.id} className={`room-timer-card ${item.statusClass} ${item.urgencyClass} ${item.isOwn ? 'timer-own' : ''}`}>
-              <div className="room-timer-progress" style={{ width: `${item.progressPercent}%` }}></div>
-              <div className="room-timer-body">
-                <div className="room-timer-left">
-                  <span className="room-timer-emoji">{item.foodEmoji}</span>
-                  <div className="room-timer-info">
-                    <span className="room-timer-name">{item.foodName}</span>
-                    <span className="room-timer-owner">{item.ownerAvatar} {item.ownerNickname}</span>
+            <div
+              key={item.id}
+              className={[
+                'room-timer-card', item.statusClass, item.urgencyClass,
+                item.isOwn ? 'timer-own' : '',
+              ].filter(Boolean).join(' ')}
+            >
+              {/* 背景进度 */}
+              <div className="rtc-bg-progress" style={{ width: `${item.progressPercent}%` }} />
+
+              <div className="rtc-body">
+                <div className="rtc-left">
+                  <span className="rtc-emoji">{item.foodEmoji}</span>
+                  <div className="rtc-info">
+                    <span className="rtc-name">{item.foodName}</span>
+                    <span className="rtc-owner">{item.ownerAvatar} {item.ownerNickname}</span>
                   </div>
                 </div>
-                <div className="room-timer-right">
-                  <span className={`room-timer-time ${item.isOver ? 'time-over' : ''}`}>{item.remainingText}</span>
-                  <div className={`room-status-tag ${item.urgencyClass} ${item.statusClass}`}>{item.statusText}</div>
+                <div className="rtc-right">
+                  <span className={`rtc-time ${item.isOver ? 'time-over' : ''}`}>{item.remainingText}</span>
+                  <span className={`rtc-status ${item.urgencyClass} ${item.statusClass}`}>{item.statusText}</span>
                 </div>
               </div>
+
+              {/* 操作按钮 */}
               {item.status === 'running' && (roomStore.isHost || item.isOwn) && (
-                <div className="room-timer-actions">
-                  <button className="action-btn action-done" onClick={() => roomStore.updateTimer(item.id, 'done')}>✓ 捞起</button>
-                  <button className="action-btn action-cancel" onClick={() => { if (window.confirm('确认取消？')) roomStore.updateTimer(item.id, 'cancelled'); }}>✕ 取消</button>
+                <div className="rtc-actions">
+                  <button className="rtc-btn done" onClick={() => roomStore.updateTimer(item.id, 'done')}>✓ 捞起</button>
+                  <button className="rtc-btn cancel" onClick={() => handleCancelTimer(item.id)}>✕ 取消</button>
                 </div>
               )}
               {item.status !== 'running' && (roomStore.isHost || item.isOwn) && (
-                <div className="room-timer-actions">
-                  <button className="action-btn action-remove" onClick={() => roomStore.removeTimer(item.id)}>🗑 移除</button>
+                <div className="rtc-actions">
+                  <button className="rtc-btn remove" onClick={() => roomStore.removeTimer(item.id)}>🗑 移除</button>
                 </div>
               )}
             </div>
@@ -282,58 +320,78 @@ export default function Room() {
         <button className="btn-leave" onClick={handleLeave}>离开房间</button>
       </div>
 
-      {/* 食材弹窗 */}
-      {showFoodModal && (
-        <div className="modal-mask-dark" onClick={() => setShowFoodModal(false)}>
-          <div className="food-modal-box" onClick={e => e.stopPropagation()}>
-            <div className="food-modal-header">
-              <span className="food-modal-title">选择食材</span>
-              <span className="food-modal-close" onClick={() => setShowFoodModal(false)}>✕</span>
-            </div>
-            <div className="food-modal-cats">
+      {/* 食材选择 Popup */}
+      <Popup
+        position="bottom"
+        visible={showFoodModal}
+        onClose={() => setShowFoodModal(false)}
+        round
+        style={{ height: '50vh', display: 'flex', flexDirection: 'column', background: '#1f0800' }}
+      >
+        <div className="dark-food-picker">
+          <div className="dfp-header">
+            <span className="dfp-title">选择食材</span>
+            <span className="dfp-close" onClick={() => setShowFoodModal(false)}>✕</span>
+          </div>
+          <div className="dfp-cats">
+            <div className="dfp-cat-row">
               {['全部', ...getCategories()].map(cat => (
-                <button key={cat} className={`food-cat-tag ${selectedCategory === cat ? 'active' : ''}`} onClick={() => setSelectedCategory(cat)}>{cat}</button>
-              ))}
-            </div>
-            <div className="food-modal-list">
-              {getAllFoods().filter(f => selectedCategory === '全部' || f.category === selectedCategory).map(food => (
-                <div key={food.id} className="food-modal-item" onClick={() => { handleAddFood(food.id); }}>
-                  <span className="food-modal-emoji">{food.emoji}</span>
-                  <div className="food-modal-detail">
-                    <span className="food-modal-name">{food.name}</span>
-                    <span className="food-modal-time">⏱ {food.cookTime.recommended}秒</span>
-                  </div>
-                  <span className="food-modal-add">+</span>
-                </div>
+                <button
+                  key={cat}
+                  className={`dfp-cat-tag ${selectedCategory === cat ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat)}
+                >{cat}</button>
               ))}
             </div>
           </div>
+          <div className="dfp-list">
+            {getAllFoods()
+              .filter(f => selectedCategory === '全部' || f.category === selectedCategory)
+              .map(food => (
+                <div key={food.id} className="dfp-item" onClick={() => handleAddFood(food.id)}>
+                  <span className="dfp-emoji">{food.emoji}</span>
+                  <div className="dfp-detail">
+                    <span className="dfp-name">{food.name}</span>
+                    <span className="dfp-time">⏱ {food.cookTime.recommended}秒</span>
+                  </div>
+                  <span className="dfp-add">+</span>
+                </div>
+              ))}
+          </div>
         </div>
-      )}
+      </Popup>
 
-      {/* 锅底弹窗（房主） */}
-      {showPotModal && (
-        <div className="modal-mask-dark" onClick={() => setShowPotModal(false)}>
-          <div className="pot-modal-box" onClick={e => e.stopPropagation()}>
-            <div className="food-modal-header">
-              <span className="food-modal-title">选择锅底</span>
-              <span className="food-modal-close" onClick={() => setShowPotModal(false)}>✕</span>
-            </div>
-            <div className="pot-modal-list">
-              {getAllPots().map(p => (
-                <div key={p.id} className={`pot-modal-item ${room?.potId === p.id ? 'active' : ''}`} onClick={() => { roomStore.setPot(p.id); setShowPotModal(false); }}>
-                  <span className="pot-modal-emoji">{p.emoji}</span>
-                  <div className="pot-modal-info">
-                    <span className="pot-modal-name">{p.name}</span>
-                    <span className="pot-modal-desc">{p.description}</span>
-                  </div>
-                  {room?.potId === p.id && <span style={{ color: '#2ecc71', fontSize: 20 }}>✓</span>}
+      {/* 锅底选择 Popup（仅房主） */}
+      <Popup
+        position="bottom"
+        visible={showPotModal}
+        onClose={() => setShowPotModal(false)}
+        round
+        style={{ height: '50vh', display: 'flex', flexDirection: 'column', background: '#1f0800' }}
+      >
+        <div className="dark-food-picker">
+          <div className="dfp-header">
+            <span className="dfp-title">选择锅底</span>
+            <span className="dfp-close" onClick={() => setShowPotModal(false)}>✕</span>
+          </div>
+          <div className="dfp-list">
+            {getAllPots().map(p => (
+              <div
+                key={p.id}
+                className={`dfp-item ${room?.potId === p.id ? 'dfp-active' : ''}`}
+                onClick={() => { roomStore.setPot(p.id); setShowPotModal(false); }}
+              >
+                <span className="dfp-emoji">{p.emoji}</span>
+                <div className="dfp-detail">
+                  <span className="dfp-name">{p.name}</span>
+                  <span className="dfp-time">{p.description}</span>
                 </div>
-              ))}
-            </div>
+                {room?.potId === p.id && <span style={{ color: '#2ecc71', fontSize: 18 }}>✓</span>}
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      </Popup>
 
       {/* 到时提醒 */}
       {alertTimer && (

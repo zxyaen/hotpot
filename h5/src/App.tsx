@@ -6,34 +6,41 @@ import Foods from './pages/Foods';
 import Room from './pages/Room';
 import History from './pages/History';
 import Settings from './pages/Settings';
+// react-vant 样式
+import 'react-vant/lib/index.css';
 import './App.css';
 
+const PAGE_TITLES: Record<string, string> = {
+  home: '🔥 熟了吗？',
+  foods: '🥩 食材库',
+  room: '🍜 同桌火锅',
+  history: '📋 历史记录',
+  settings: '⚙️ 设置',
+};
+
 function AppInner() {
-  const { currentTab, setCurrentTab } = useApp();
+  const { currentTab, setCurrentTab, timerStore } = useApp();
 
   return (
-    <div className="app">
-      {/* 顶部标题栏 */}
-      <div className="app-header">
-        <span className="app-header-title">
-          {currentTab === 'home' && '🔥 熟了吗？'}
-          {currentTab === 'foods' && '🥩 食材库'}
-          {currentTab === 'room' && '🍜 同桌火锅'}
-          {currentTab === 'history' && '📋 历史记录'}
-          {currentTab === 'settings' && '⚙️ 设置'}
-        </span>
-      </div>
+    <div className="app-root">
+      {/* 固定顶部 Header */}
+      <header className="app-header">
+        <span className="app-header-title">{PAGE_TITLES[currentTab]}</span>
+        {currentTab === 'home' && timerStore.runningCount > 0 && (
+          <span className="header-badge">{timerStore.runningCount}</span>
+        )}
+      </header>
 
-      {/* 页面内容 */}
-      <div className="app-content">
-        {currentTab === 'home' && <Home />}
-        {currentTab === 'foods' && <Foods />}
-        {currentTab === 'room' && <Room />}
-        {currentTab === 'history' && <History />}
-        {currentTab === 'settings' && <Settings />}
-      </div>
+      {/* 可滚动内容区 */}
+      <main className="app-main">
+        <div style={{ display: currentTab === 'home' ? 'block' : 'none' }}><Home /></div>
+        <div style={{ display: currentTab === 'foods' ? 'block' : 'none' }}><Foods /></div>
+        <div style={{ display: currentTab === 'room' ? 'block' : 'none' }}><Room /></div>
+        <div style={{ display: currentTab === 'history' ? 'block' : 'none' }}><History /></div>
+        <div style={{ display: currentTab === 'settings' ? 'block' : 'none' }}><Settings /></div>
+      </main>
 
-      {/* 底部导航 */}
+      {/* 固定底部 TabBar */}
       <TabBar current={currentTab} onChange={setCurrentTab} />
     </div>
   );

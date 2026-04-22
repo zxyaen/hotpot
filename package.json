@@ -1,0 +1,18 @@
+{
+  "name": "hotpot-timer",
+  "version": "1.0.0",
+  "description": "一个帮你涮火锅时掌控火候的微信小程序。支持多食材并行计时、智能锅底时间适配、同桌多人实时同步，以及完整的自定义食材 / 锅底能力。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cloudbase/manager-node": "^5.1.1"
+  }
+}
