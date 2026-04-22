@@ -4,7 +4,7 @@
 .room-lobby {
   min-height: 100%;
   background: #FFF0E6;
-  padding-bottom: 24px;
+  padding-bottom: calc(var(--tabbar-h, 50px) + var(--safe-bottom, 0px) + 12px);
 }
 
 .lobby-card {
@@ -99,7 +99,7 @@
 .room-view {
   min-height: 100%;
   background: #1a0a00;
-  padding-bottom: 40px;
+  padding-bottom: calc(var(--tabbar-h, 50px) + var(--safe-bottom, 0px) + 12px);
 }
 
 .room-header {

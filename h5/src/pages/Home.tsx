@@ -332,13 +332,19 @@ export default function Home() {
 }
 
 function PotList({ onClose }: { onClose: () => void }) {
-  const { timerStore, openSubPage } = useApp();
-  const pots = getAllPots();
+  const { timerStore, openSubPage, customDataStore } = useApp();
+  const allPots = getAllPots();
   const [, forceUpdate] = useState(0);
   useEffect(() => {
-    const unsub = timerStore.subscribe(() => forceUpdate(n => n + 1));
-    return unsub;
-  }, [timerStore]);
+    const unsub1 = timerStore.subscribe(() => forceUpdate(n => n + 1));
+    const unsub2 = customDataStore.subscribe(() => forceUpdate(n => n + 1));
+    return () => { unsub1(); unsub2(); };
+  }, [timerStore, customDataStore]);
+
+  // 自定义锅底排最前面，内置锅底在后面
+  const customPots = allPots.filter(p => p.id.startsWith('cpot_'));
+  const builtinPots = allPots.filter(p => !p.id.startsWith('cpot_'));
+  const sortedPots = [...customPots, ...builtinPots];
 
   function isCustomPot(id: string) { return id.startsWith('cpot_'); }
 
@@ -349,7 +355,22 @@ function PotList({ onClose }: { onClose: () => void }) {
         <span className="popup-close" onClick={onClose}>✕</span>
       </div>
       <div className="pot-list">
-        {pots.map((p: ReturnType<typeof getAllPots>[number]) => (
+        {/* 新增自定义锅底 — 排在第一个 */}
+        <div
+          className="pot-item pot-item-add"
+          onClick={() => {
+            onClose();
+            setTimeout(() => openSubPage({ type: 'custom-pot' }), 200);
+          }}
+        >
+          <span className="pot-item-emoji">➕</span>
+          <div className="pot-item-info">
+            <span className="pot-item-name">自定义锅底</span>
+            <span className="pot-item-desc">添加你的专属锅底</span>
+          </div>
+        </div>
+
+        {sortedPots.map((p) => (
           <div
             key={p.id}
             className={`pot-item ${timerStore.currentPotId === p.id ? 'active' : ''}`}
@@ -374,17 +395,6 @@ function PotList({ onClose }: { onClose: () => void }) {
             )}
           </div>
         ))}
-        {/* 新增自定义锅底 */}
-        <div
-          className="pot-item pot-item-add"
-          onClick={() => { onClose(); setTimeout(() => openSubPage({ type: 'custom-pot' }), 200); }}
-        >
-          <span className="pot-item-emoji">➕</span>
-          <div className="pot-item-info">
-            <span className="pot-item-name">自定义锅底</span>
-            <span className="pot-item-desc">添加你的专属锅底</span>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 .settings-page {
   min-height: 100%;
   background: var(--color-bg);
-  padding-bottom: 30px;
+  padding-bottom: calc(var(--tabbar-h, 50px) + var(--safe-bottom, 0px) + 12px);
 }
 
 .settings-group-title {

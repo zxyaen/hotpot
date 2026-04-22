@@ -95,7 +95,7 @@
   background: #F7F3EE;
   align-content: start;
   /* 为fixed的sticky-top留出空间（搜索~46px + 分类~50px + padding = 约116px） */
-  padding: 116px 8px 20px;
+  padding: 116px 8px calc(var(--tabbar-h, 50px) + var(--safe-bottom, 0px) + 12px);
 }
 
 /* 食材卡片 */

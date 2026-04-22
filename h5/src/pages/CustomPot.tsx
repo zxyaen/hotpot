@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function CustomPot({ editId, onBack }: Props) {
-  const { customDataStore } = useApp();
+  const { customDataStore, timerStore } = useApp();
   const isEdit = !!editId;
 
   const [form, setForm] = useState({
@@ -70,7 +70,11 @@ export default function CustomPot({ editId, onBack }: Props) {
       description: form.description.trim(),
     };
     customDataStore.savePot(pot);
-    toastSuccess(isEdit ? '保存成功' : '添加成功');
+    // 新增时自动选中该锅底
+    if (!isEdit) {
+      timerStore.setPot(id);
+    }
+    toastSuccess(isEdit ? '保存成功' : '已添加并自动选中');
     setTimeout(onBack, 600);
   }
 

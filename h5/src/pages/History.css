@@ -1,5 +1,5 @@
 /* History.css */
-.history-page { min-height: 100vh; background: #FFF5E6; padding-bottom: 80px; }
+.history-page { min-height: 100%; background: #FFF5E6; padding-bottom: calc(var(--tabbar-h, 50px) + var(--safe-bottom, 0px) + 12px); }
 .history-empty { padding: 80px 24px; text-align: center; }
 .history-empty-emoji { font-size: 64px; margin-bottom: 14px; }
 .history-empty-title { font-size: 20px; font-weight: 600; color: #2C3E50; margin-bottom: 8px; }

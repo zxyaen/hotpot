@@ -5,6 +5,13 @@ import { formatDuration } from '../utils/helpers';
 import { toast, alert } from '../utils/toast';
 import './Foods.css';
 
+// 按汉字拼音首字母排序
+function sortByPinyin(foods: ReturnType<typeof getAllFoods>) {
+  return [...foods].sort((a, b) =>
+    a.name.localeCompare(b.name, 'zh-Hans-CN', { sensitivity: 'base' })
+  );
+}
+
 export default function Foods() {
   const { timerStore, openSubPage, tick } = useApp();
   // tick 用于触发重渲（自定义食材新增后刷新列表）
@@ -17,11 +24,13 @@ export default function Foods() {
   const foods = getAllFoods();
   const categories = ['全部', ...getCategories()];
 
-  const filtered = foods.filter(f => {
-    const matchCat = category === '全部' || f.category === category;
-    const matchSearch = !search || f.name.includes(search);
-    return matchCat && matchSearch;
-  });
+  const filtered = sortByPinyin(
+    foods.filter(f => {
+      const matchCat = category === '全部' || f.category === category;
+      const matchSearch = !search || f.name.includes(search);
+      return matchCat && matchSearch;
+    })
+  );
 
   async function handleAdd(foodId: string) {
     if (!timerStore.currentPotId) {
@@ -79,6 +88,12 @@ export default function Foods() {
 
       {/* 3列网格食材列表 */}
       <div className="foods-scroll-body">
+        {/* 新增自定义食材卡片 — 排在第一个 */}
+        <div className="food-card food-card-add" onClick={() => openSubPage({ type: 'custom-food' })}>
+          <span className="food-card-add-icon">＋</span>
+          <span className="food-card-name">自定义</span>
+        </div>
+
         {filtered.map(food => (
           <div
             key={food.id}
@@ -98,12 +113,6 @@ export default function Foods() {
             )}
           </div>
         ))}
-
-        {/* 新增自定义食材卡片 */}
-        <div className="food-card food-card-add" onClick={() => openSubPage({ type: 'custom-food' })}>
-          <span className="food-card-add-icon">＋</span>
-          <span className="food-card-name">自定义</span>
-        </div>
 
         {filtered.length === 0 && (
           <div className="foods-empty">暂无相关食材</div>

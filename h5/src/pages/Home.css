@@ -60,9 +60,11 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 4px 14px 130px;
+  padding: 4px 14px 0;
   /* 为fixed的sticky-top留出空间（锅底卡片~56px + 状态栏~54px + padding = 约140px） */
   padding-top: 148px;
+  /* 底部留出bottom-actions + tabbar的高度 */
+  padding-bottom: calc(var(--tabbar-h, 50px) + var(--safe-bottom, 0px) + 72px);
   margin-top: 0;
 }
 
