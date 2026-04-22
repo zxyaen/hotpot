@@ -83,14 +83,15 @@
   font-size: 28rpx;
   border: 1rpx solid #5a2a00;
   box-sizing: border-box;
+  display: block;
 }
 
 .input-code {
-  letter-spacing: 8rpx;
   font-size: 36rpx;
   font-weight: bold;
   text-align: center;
   text-transform: uppercase;
+  letter-spacing: 4rpx;
   margin-bottom: 20rpx;
 }
 

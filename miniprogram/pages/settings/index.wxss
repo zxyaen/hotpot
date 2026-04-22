@@ -23,9 +23,12 @@
 .row-label { font-size: 28rpx; color: #34495E; flex-shrink: 0; }
 .row-input {
   flex: 1;
+  min-width: 0;
   text-align: right;
   font-size: 28rpx;
   color: #C0392B;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .avatar-list {
