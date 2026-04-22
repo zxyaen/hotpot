@@ -6,7 +6,7 @@ import { toast } from '../utils/toast';
 import './Foods.css';
 
 export default function Foods() {
-  const { timerStore } = useApp();
+  const { timerStore, setCurrentTab } = useApp();
   const [category, setCategory] = useState('全部');
   const [search, setSearch] = useState('');
   const foods = getAllFoods();
@@ -26,6 +26,8 @@ export default function Foods() {
     }
     const food = foods.find(f => f.id === foodId);
     if (food) toast(`${food.emoji} ${food.name} 开始计时`);
+    // 跳转到首页查看倒计时
+    setTimeout(() => setCurrentTab('home'), 300);
   }
 
   return (
@@ -56,20 +58,13 @@ export default function Foods() {
         </div>
       </div>
 
-      {/* 可滚动食材列表 */}
+      {/* 3列网格食材列表 */}
       <div className="foods-scroll-body">
         {filtered.map(food => (
-          <div key={food.id} className="food-card">
+          <div key={food.id} className="food-card" onClick={() => handleAdd(food.id)}>
             <span className="food-card-emoji">{food.emoji}</span>
-            <div className="food-card-info">
-              <span className="food-card-name">{food.name}</span>
-              <span className="food-card-cat">{food.category}</span>
-              <span className="food-card-tips">{food.tips}</span>
-            </div>
-            <div className="food-card-right">
-              <span className="food-card-time">{formatDuration(food.cookTime.recommended)}</span>
-              <button className="btn-time" onClick={() => handleAdd(food.id)}>计时</button>
-            </div>
+            <span className="food-card-name">{food.name}</span>
+            <span className="food-card-time">{formatDuration(food.cookTime.recommended)}</span>
           </div>
         ))}
         {filtered.length === 0 && (

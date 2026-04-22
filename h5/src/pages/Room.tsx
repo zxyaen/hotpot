@@ -40,10 +40,14 @@ export default function Room() {
     const progress = Math.min(100, Math.round((elapsed / total) * 100));
     const isOwn = t.ownerId === roomStore.you?.id;
     const isOver = remaining <= 0 && t.status === 'running';
+    const justAdded = elapsed < 10 && t.status === 'running';
+    const nearDone = t.status === 'running' && !isOver && remaining <= total * 0.4;
+
     const urgencyClass =
       isOver ? 'status-over' :
       t.status !== 'running' ? '' :
-      remaining > total * 0.4 ? 'urgency-safe' : 'urgency-warn';
+      justAdded ? 'urgency-raw' :
+      nearDone ? 'urgency-warn' : 'urgency-safe';
     return {
       ...t, remaining, remainingText: formatCountdown(remaining),
       progressPercent: progress, isOwn, isOver, urgencyClass,
@@ -51,13 +55,20 @@ export default function Room() {
         t.status === 'done' ? '已完成' :
         t.status === 'cancelled' ? '已取消' :
         isOver ? '到时了' :
-        remaining > total * 0.4 ? '慢慢来' : '快好了',
+        justAdded ? '生着呢' :
+        nearDone ? '快好了' : '慢慢来',
       statusClass:
         t.status === 'done' ? 'status-done' :
         t.status === 'cancelled' ? 'status-cancelled' :
         isOver ? 'status-over' : 'status-running',
     };
   });
+
+  // 完成/取消排到最后
+  const sortedTimersView = [
+    ...timersView.filter(t => t.status === 'running'),
+    ...timersView.filter(t => t.status !== 'running'),
+  ];
 
   // 选择头像时同步保存
   function handleSelectAvatar(em: string) {
@@ -257,7 +268,7 @@ export default function Room() {
         {timersView.length === 0 ? (
           <div className="room-empty">还没有食材在涮，点击「加食材」开始</div>
         ) : (
-          timersView.map(item => (
+          sortedTimersView.map(item => (
             <div
               key={item.id}
               className={[
@@ -323,17 +334,14 @@ export default function Room() {
               ))}
             </div>
           </div>
-          <div className="dfp-list">
+          <div className="dfp-list dfp-grid">
             {getAllFoods()
               .filter(f => selectedCategory === '全部' || f.category === selectedCategory)
               .map(food => (
-                <div key={food.id} className="dfp-item" onClick={() => handleAddFood(food.id)}>
+                <div key={food.id} className="dfp-grid-item" onClick={() => handleAddFood(food.id)}>
                   <span className="dfp-emoji">{food.emoji}</span>
-                  <div className="dfp-detail">
-                    <span className="dfp-name">{food.name}</span>
-                    <span className="dfp-time">⏱ {food.cookTime.recommended}秒</span>
-                  </div>
-                  <span className="dfp-add">+</span>
+                  <span className="dfp-name">{food.name}</span>
+                  <span className="dfp-time">{food.cookTime.recommended}s</span>
                 </div>
               ))}
           </div>

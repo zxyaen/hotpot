@@ -10,7 +10,7 @@ import AlertModal from '../components/AlertModal';
 import './Home.css';
 
 export default function Home() {
-  const { timerStore } = useApp();
+  const { timerStore, setCurrentTab } = useApp();
   const [, forceUpdate] = useState(0);
   const [showFoodPicker, setShowFoodPicker] = useState(false);
   const [showPotPicker, setShowPotPicker] = useState(false);
@@ -33,21 +33,22 @@ export default function Home() {
     const progress = Math.min(100, Math.round((elapsed / total) * 100));
     const isOver = remaining <= 0 && t.status === 'running';
 
-    // 刚入锅前10秒：正在生
+    // 刚入锅前10秒：生着呢（红色）；还剩40%以上：黄色警告；快好了：绿色
     const justAdded = elapsed < 10 && t.status === 'running';
+    const nearDone = t.status === 'running' && !isOver && remaining <= total * 0.4;
 
     const urgencyClass =
       isOver ? 'status-over' :
       t.status !== 'running' ? '' :
       justAdded ? 'urgency-raw' :
-      remaining > total * 0.4 ? 'urgency-safe' : 'urgency-warn';
+      nearDone ? 'urgency-warn' : 'urgency-safe';
 
     const statusText =
       t.status === 'done' ? '已完成' :
       t.status === 'cancelled' ? '已取消' :
       isOver ? '到时了' :
-      justAdded ? '正在生' :
-      remaining > total * 0.4 ? '慢慢来' : '快好了';
+      justAdded ? '生着呢' :
+      nearDone ? '快好了' : '慢慢来';
 
     return {
       ...t, remaining, remainingText: formatCountdown(remaining),
@@ -63,7 +64,13 @@ export default function Home() {
     };
   });
 
-  const runningTimers = timersView.filter(t => t.status === 'running' && !t.isOver);
+  // 完成/取消的排到最后
+  const sortedTimersView = [
+    ...timersView.filter(t => t.status === 'running'),
+    ...timersView.filter(t => t.status !== 'running'),
+  ];
+
+  const runningTimers = sortedTimersView.filter(t => t.status === 'running' && !t.isOver);
 
   function handleCardTap(id: string, status: string, isOver: boolean) {
     if (!batchMode) return;
@@ -171,7 +178,7 @@ export default function Home() {
         {/* 计时器列表 */}
         {timersView.length > 0 ? (
           <div className="timer-list">
-            {timersView.map(item => (
+            {sortedTimersView.map(item => (
               <div
                 key={item.id}
                 className={[
@@ -269,7 +276,7 @@ export default function Home() {
           </button>
         ) : (
           <>
-            <button className="btn-add-food" onClick={() => setShowFoodPicker(true)}>
+            <button className="btn-add-food" onClick={() => setCurrentTab('foods')}>
               <span className="btn-add-icon">🍲</span>
               <span className="btn-add-text">下菜开始计时</span>
             </button>
@@ -321,7 +328,6 @@ function PotList({ onClose }: { onClose: () => void }) {
     const unsub = timerStore.subscribe(() => forceUpdate(n => n + 1));
     return unsub;
   }, [timerStore]);
-  const pots = getAllPots();
   return (
     <div className="pot-picker-inner">
       <div className="popup-header">

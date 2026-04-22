@@ -21,15 +21,16 @@ export default function FoodPicker({ visible, onSelect, onClose }: Props) {
       visible={visible}
       onClose={onClose}
       round
-      style={{ height: '50vh', display: 'flex', flexDirection: 'column' }}
+      style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}
     >
       <div className="food-picker">
+        {/* 标题 + 关闭 */}
         <div className="fp-header">
           <span className="fp-title">选择食材</span>
           <span className="fp-close" onClick={onClose}>✕</span>
         </div>
 
-        {/* 分类横滑 */}
+        {/* 分类横滑（固定，不随列表滚动） */}
         <div className="fp-cats">
           <div className="fp-cat-row">
             {categories.map(cat => (
@@ -42,16 +43,13 @@ export default function FoodPicker({ visible, onSelect, onClose }: Props) {
           </div>
         </div>
 
-        {/* 食材列表 */}
-        <div className="fp-list">
+        {/* 食材网格（3列） */}
+        <div className="fp-grid">
           {filtered.map(food => (
-            <div key={food.id} className="fp-item" onClick={() => onSelect(food.id)}>
-              <span className="fp-emoji">{food.emoji}</span>
-              <div className="fp-detail">
-                <span className="fp-name">{food.name}</span>
-                <span className="fp-time">⏱ {food.cookTime.recommended}秒</span>
-              </div>
-              <span className="fp-add">+</span>
+            <div key={food.id} className="fp-grid-item" onClick={() => onSelect(food.id)}>
+              <span className="fp-grid-emoji">{food.emoji}</span>
+              <span className="fp-grid-name">{food.name}</span>
+              <span className="fp-grid-time">{food.cookTime.recommended}s</span>
             </div>
           ))}
         </div>

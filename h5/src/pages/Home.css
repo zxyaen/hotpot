@@ -84,9 +84,9 @@
   border-left: 5px solid #95A5A6;
   position: relative; overflow: hidden;
 }
-.timer-card.urgency-raw  { border-left-color: #95A5A6; }
-.timer-card.urgency-safe { border-left-color: #27AE60; }
-.timer-card.urgency-warn { border-left-color: #F39C12; background: #FFFDF5; }
+.timer-card.urgency-raw  { border-left-color: #E74C3C; background: #FFF8F8; }
+.timer-card.urgency-safe { border-left-color: #F39C12; background: #FFFDF5; }
+.timer-card.urgency-warn { border-left-color: #27AE60; background: #F0FFF6; }
 .timer-card.status-over {
   border-left-color: #E74C3C; background: #FFF8F8;
   animation: shake 0.5s ease-in-out infinite;
@@ -112,9 +112,9 @@
   background: #F2F3F4; color: #7F8C8D;
   width: fit-content;
 }
-.status-tag.urgency-raw  { background: #F2F3F4; color: #7F8C8D; }
-.status-tag.urgency-safe { background: #E8F8F0; color: #27AE60; }
-.status-tag.urgency-warn { background: #FEF9E7; color: #E67E22; }
+.status-tag.urgency-raw  { background: #FDEDEC; color: #E74C3C; }
+.status-tag.urgency-safe { background: #FEF9E7; color: #E67E22; }
+.status-tag.urgency-warn { background: #E8F8F0; color: #27AE60; }
 .status-tag.status-over  { background: #FDEDEC; color: #E74C3C; }
 .status-tag.status-done,
 .status-tag.status-cancelled { background: #F2F3F4; color: #95A5A6; }
@@ -125,9 +125,9 @@
   flex-shrink: 0; margin-left: 8px;
   color: #95A5A6;
 }
-.timer-countdown.urgency-raw  { color: #95A5A6; }
-.timer-countdown.urgency-safe { color: #27AE60; }
-.timer-countdown.urgency-warn { color: #F39C12; }
+.timer-countdown.urgency-raw  { color: #E74C3C; }
+.timer-countdown.urgency-safe { color: #F39C12; }
+.timer-countdown.urgency-warn { color: #27AE60; }
 .timer-countdown.status-over  { font-size: 28px; color: #E74C3C; }
 .timer-countdown.status-done  { font-size: 28px; color: #27AE60; }
 .timer-countdown.blink { animation: blink 0.8s infinite; }
@@ -141,9 +141,9 @@
   height: 100%; border-radius: 3px;
   transition: width 1s linear; background: #95A5A6;
 }
-.progress-fill.urgency-raw  { background: #95A5A6; }
-.progress-fill.urgency-safe { background: #27AE60; }
-.progress-fill.urgency-warn { background: linear-gradient(90deg, #27AE60, #F39C12); }
+.progress-fill.urgency-raw  { background: #E74C3C; }
+.progress-fill.urgency-safe { background: #F39C12; }
+.progress-fill.urgency-warn { background: #27AE60; }
 .progress-fill.status-over  { background: #E74C3C; }
 
 .timer-meta { margin-bottom: 8px; }
