@@ -1,6 +1,6 @@
 // pages/room/index.ts
 import { formatCountdown } from '../../utils/helpers';
-import { getPotById, adjustTimeByPot } from '../../utils/builtin-data';
+import { getAllFoods, getCategories, getPotById, adjustTimeByPot } from '../../utils/builtin-data';
 import { WS_BASE } from '../../utils/config';
 import type { RoomStore, RoomTimer, RoomMember } from '../../stores/room-store';
 
@@ -59,9 +59,9 @@ Page({
       if (url) this.setData({ wsUrl: url });
     } catch {}
 
-    // 读取食材数据
-    const foodData = app.globalData.foods || [];
-    const cats = ['全部', ...(app.globalData.categories || [])];
+    // 读取食材数据（直接从内存读，避免 globalData 时序问题）
+    const foodData = getAllFoods();
+    const cats = ['全部', ...getCategories()];
     this.setData({ foods: foodData, categories: cats });
 
     // 订阅 RoomStore
@@ -257,7 +257,7 @@ Page({
   onAddFoodTimer(e: any) {
     const foodId = e.currentTarget.dataset.id;
     const store: RoomStore = app.globalData.roomStore;
-    const food = (app.globalData.foods || []).find((f: Food) => f.id === foodId);
+    const food = getAllFoods().find((f: Food) => f.id === foodId);
     if (!food) return;
 
     const potId = store.currentRoom?.potId || null;
