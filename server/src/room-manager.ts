@@ -5,9 +5,8 @@
 import { customAlphabet } from 'nanoid';
 import type { Room, Member, Timer, RoomStatus } from './types';
 
-// 房间码字符集（去掉易混淆的 0/O/1/I）
-const ROOM_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-const generateRoomCode = customAlphabet(ROOM_CODE_ALPHABET, 6);
+// 房间码：4位纯数字（1-9，避免0开头歧义）
+const generateRoomCode = customAlphabet('123456789', 4);
 
 // 成员ID生成器
 const generateMemberId = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 12);

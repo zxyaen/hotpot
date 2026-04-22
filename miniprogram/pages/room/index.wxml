@@ -46,7 +46,7 @@
       <input
         class="input input-code"
         placeholder="输入4位房间码"
-        maxlength="6"
+        maxlength="4"
         value="{{joinCode}}"
         bindinput="onJoinCodeInput"
       />

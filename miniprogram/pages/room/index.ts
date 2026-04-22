@@ -145,7 +145,8 @@ Page({
   },
 
   onJoinCodeInput(e: any) {
-    this.setData({ joinCode: e.detail.value.toUpperCase() });
+    // 只保留数字
+    this.setData({ joinCode: e.detail.value.replace(/\D/g, '') });
   },
 
   onWsUrlInput(e: any) {
