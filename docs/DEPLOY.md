@@ -61,15 +61,15 @@ cloudbase run deploy --env <你的环境ID>
 
 ```typescript
 // miniprogram/utils/config.ts
-export const API_BASE = 'https://xxx.ap-shanghai.run.tcloudbase.com';
-export const WS_BASE  = 'wss://xxx.ap-shanghai.run.tcloudbase.com/ws';
+export const API_BASE = 'https://hotpot-d7gn5onbkea76e975.ap-shanghai.run.tcloudbase.com';
+export const WS_BASE  = 'wss://hotpot-d7gn5onbkea76e975.ap-shanghai.run.tcloudbase.com/ws';
 ```
 
 ### 2. 在微信公众平台配置合法域名
 1. 登录 https://mp.weixin.qq.com → 「开发」→「开发管理」→「服务器域名」
 2. 添加：
-   - **request 合法域名**：`https://xxx.ap-shanghai.run.tcloudbase.com`
-   - **socket 合法域名**：`wss://xxx.ap-shanghai.run.tcloudbase.com`
+   - **request 合法域名**：`https://hotpot-d7gn5onbkea76e975.ap-shanghai.run.tcloudbase.com`
+   - **socket 合法域名**：`wss://hotpot-d7gn5onbkea76e975.ap-shanghai.run.tcloudbase.com`
 
 ---
 

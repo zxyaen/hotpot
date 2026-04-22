@@ -12,5 +12,5 @@
  */
 
 // ⬇️ 部署后只需修改这两行
-export const API_BASE = 'http://localhost:3000';
-export const WS_BASE  = 'ws://localhost:3000/ws';
+export const API_BASE = 'https://hotpot-d7gn5onbkea76e975.ap-shanghai.run.tcloudbase.com';
+export const WS_BASE  = 'wss://hotpot-d7gn5onbkea76e975.ap-shanghai.run.tcloudbase.com/ws';

@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "envId": "{{YOUR_ENV_ID}}",
+  "envId": "hotpot-d7gn5onbkea76e975",
   "framework": {
     "name": "hotpot-timer-server",
     "plugins": {}
