@@ -46,6 +46,7 @@ Page({
     const store: TimerStore = app.globalData.timerStore;
     if (!store) return;
     const pot = store.currentPotId ? getPotById(store.currentPotId) : null;
+    const selectedIds = this.data.selectedIds;
 
     const timersView = store.timers.map((t) => {
       const remaining = store.getRemaining(t);
@@ -61,6 +62,7 @@ Page({
         progressPercent: progress,
         totalText: formatDuration(total),
         isOver,
+        isSelected: selectedIds.includes(t.id),
         statusText:
           t.status === 'done' ? '已完成' :
           t.status === 'cancelled' ? '已取消' :
@@ -82,12 +84,22 @@ Page({
     });
   },
 
+  /** 仅刷新选中状态（不重新计算所有计时器，避免倒计时闪烁） */
+  refreshSelected() {
+    const selectedIds = this.data.selectedIds;
+    const timers = this.data.timers.map((t: any) => ({
+      ...t,
+      isSelected: selectedIds.includes(t.id),
+    }));
+    this.setData({ timers });
+  },
+
   onSelectPot() {
     wx.navigateTo({ url: '/pages/pot/index' });
   },
 
   onAddFood() {
-    wx.navigateTo({ url: '/pages/foods/index' });
+    wx.switchTab({ url: '/pages/foods/index' });
   },
 
   // 卡片点击：批量模式下切换选中，普通模式不处理
@@ -106,16 +118,19 @@ Page({
       selected.push(id);
     }
     this.setData({ selectedIds: selected });
+    this.refreshSelected();
   },
 
   // 进入批量模式
   onEnterBatch() {
     this.setData({ batchMode: true, selectedIds: [] });
+    this.refreshSelected();
   },
 
   // 退出批量模式
   onExitBatch() {
     this.setData({ batchMode: false, selectedIds: [] });
+    this.refreshSelected();
   },
 
   // 全选 / 取消全选
@@ -123,6 +138,7 @@ Page({
     const runningIds = this.data.runningTimers.map((t: any) => t.id);
     const allSelected = this.data.selectedIds.length === runningIds.length;
     this.setData({ selectedIds: allSelected ? [] : runningIds });
+    this.refreshSelected();
   },
 
   // 批量取消

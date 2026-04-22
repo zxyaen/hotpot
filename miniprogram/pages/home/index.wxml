@@ -33,14 +33,14 @@
 
   <!-- 批量操作工具栏 -->
   <view class="batch-toolbar" wx:if="{{batchMode}}">
-    <view class="batch-info">
-      <text class="batch-count" wx:if="{{selectedIds.length > 0}}">已选 {{selectedIds.length}} 个</text>
-      <text class="batch-count" wx:else>点击卡片选择</text>
-    </view>
-    <view class="batch-actions">
-      <view class="batch-btn batch-select-all" bindtap="onSelectAll">
-        {{selectedIds.length === runningTimers.length ? '取消全选' : '全选'}}
+      <view class="batch-info">
+        <text class="batch-count" wx:if="{{selectedIds.length > 0}}">已选 {{selectedIds.length}} 个</text>
+        <text class="batch-count" wx:else>点击卡片选择</text>
       </view>
+      <view class="batch-actions">
+        <view class="batch-btn batch-select-all" bindtap="onSelectAll">
+          {{selectedIds.length > 0 && selectedIds.length === runningTimers.length ? '取消全选' : '全选'}}
+        </view>
       <view
         class="batch-btn batch-cancel-btn {{selectedIds.length === 0 ? 'disabled' : ''}}"
         bindtap="onBatchCancel"
@@ -51,7 +51,7 @@
   <!-- 计时器列表 -->
   <view class="timer-list" wx:if="{{timers.length > 0}}">
     <view
-      class="timer-card {{item.statusClass}} {{batchMode && item.status === 'running' && !item.isOver ? 'batch-selectable' : ''}} {{batchMode && selectedIds.indexOf(item.id) > -1 ? 'batch-selected' : ''}}"
+      class="timer-card {{item.statusClass}} {{batchMode && item.status === 'running' && !item.isOver ? 'batch-selectable' : ''}} {{item.isSelected ? 'batch-selected' : ''}}"
       wx:for="{{timers}}"
       wx:key="id"
       data-id="{{item.id}}"
@@ -61,8 +61,8 @@
     >
       <!-- 多选勾选框 -->
       <view class="select-check" wx:if="{{batchMode && item.status === 'running' && !item.isOver}}">
-        <view class="check-circle {{selectedIds.indexOf(item.id) > -1 ? 'checked' : ''}}">
-          <text wx:if="{{selectedIds.indexOf(item.id) > -1}}">✓</text>
+        <view class="check-circle {{item.isSelected ? 'checked' : ''}}">
+          <text wx:if="{{item.isSelected}}">✓</text>
         </view>
       </view>
 
