@@ -51,7 +51,7 @@
   <!-- 计时器列表 -->
   <view class="timer-list" wx:if="{{timers.length > 0}}">
     <view
-      class="timer-card {{item.statusClass}} {{batchMode && item.status === 'running' && !item.isOver ? 'batch-selectable' : ''}} {{item.isSelected ? 'batch-selected' : ''}}"
+      class="timer-card {{item.statusClass}} {{item.urgencyClass}} {{batchMode && item.status === 'running' && !item.isOver ? 'batch-selectable' : ''}} {{item.isSelected ? 'batch-selected' : ''}}"
       wx:for="{{timers}}"
       wx:key="id"
       data-id="{{item.id}}"
@@ -66,43 +66,47 @@
         </view>
       </view>
 
-      <view class="timer-header">
+      <!-- 顶部：食材信息 + 大号倒计时 -->
+      <view class="timer-top">
         <view class="timer-food">
           <text class="food-emoji">{{item.foodEmoji}}</text>
-          <view>
-            <view class="food-name">{{item.foodName}}</view>
-            <view class="food-meta">总时长 {{item.totalText}}</view>
+          <view class="food-info">
+            <text class="food-name">{{item.foodName}}</text>
+            <view class="status-tag {{item.statusClass}} {{item.urgencyClass}}">{{item.statusText}}</view>
           </view>
         </view>
-        <view class="timer-status {{item.statusClass}}">{{item.statusText}}</view>
-      </view>
-
-      <!-- 倒计时大字 -->
-      <view class="timer-countdown" wx:if="{{item.status === 'running' && !item.isOver}}">
-        {{item.remainingText}}
-      </view>
-      <view class="timer-countdown over" wx:elif="{{item.isOver}}">
-        🔔 到时了！
-      </view>
-      <view class="timer-countdown done" wx:else>
-        ✓
+        <!-- 倒计时大字 -->
+        <view class="timer-countdown {{item.urgencyClass}}" wx:if="{{item.status === 'running' && !item.isOver}}">{{item.remainingText}}</view>
+        <view class="timer-countdown status-over" wx:elif="{{item.isOver}}">🔔</view>
+        <view class="timer-countdown status-done" wx:else>✓</view>
       </view>
 
       <!-- 进度条 -->
       <view class="progress-bar" wx:if="{{item.status === 'running'}}">
-        <view class="progress-fill {{item.isOver ? 'over' : ''}}" style="width: {{item.progressPercent}}%"></view>
+        <view class="progress-fill {{item.urgencyClass}} {{item.isOver ? 'status-over' : ''}}" style="width: {{item.progressPercent}}%"></view>
+      </view>
+
+      <!-- 时长信息 -->
+      <view class="timer-meta" wx:if="{{item.status === 'running'}}">
+        <text class="meta-text">推荐 {{item.totalText}} · 已入锅 {{item.elapsedText}}</text>
+      </view>
+      <view class="timer-meta" wx:elif="{{item.isOver}}">
+        <text class="meta-over">🔔 到时了！快捞出来~</text>
+      </view>
+      <view class="timer-meta" wx:else>
+        <text class="meta-text">总时长 {{item.totalText}}</text>
       </view>
 
       <!-- 操作按钮（批量模式下隐藏） -->
       <view class="timer-actions" wx:if="{{!batchMode}}">
         <block wx:if="{{item.status === 'running' && !item.isOver}}">
-          <button class="btn-mini btn-cancel" data-id="{{item.id}}" bindtap="onCancelTimer" catchtap="onCancelTimer">取消</button>
+          <button class="btn-mini btn-cancel" data-id="{{item.id}}" catchtap="onCancelTimer">取消</button>
         </block>
         <block wx:elif="{{item.isOver}}">
-          <button class="btn-mini btn-confirm" data-id="{{item.id}}" bindtap="onConfirmDone" catchtap="onConfirmDone">我已捞出</button>
+          <button class="btn-mini btn-confirm" data-id="{{item.id}}" catchtap="onConfirmDone">✓ 我已捞出</button>
         </block>
         <block wx:else>
-          <button class="btn-mini btn-remove" data-id="{{item.id}}" bindtap="onRemoveTimer" catchtap="onRemoveTimer">移除</button>
+          <button class="btn-mini btn-remove" data-id="{{item.id}}" catchtap="onRemoveTimer">移除</button>
         </block>
       </view>
     </view>

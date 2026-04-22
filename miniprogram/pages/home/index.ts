@@ -55,18 +55,28 @@ Page({
       const progress = Math.min(100, Math.round((elapsed / total) * 100));
       const isOver = remaining <= 0 && t.status === 'running';
 
+      // 紧迫度颜色：绿(充裕) > 黄(快到) > 红(到时)
+      const urgencyClass =
+        isOver ? 'status-over' :
+        t.status !== 'running' ? '' :
+        remaining > total * 0.4 ? 'urgency-safe' :
+        'urgency-warn';
+
       return {
         ...t,
         remaining,
         remainingText: formatCountdown(remaining),
         progressPercent: progress,
         totalText: formatDuration(total),
+        elapsedText: formatDuration(elapsed),
         isOver,
+        urgencyClass,
         isSelected: selectedIds.includes(t.id),
         statusText:
           t.status === 'done' ? '已完成' :
           t.status === 'cancelled' ? '已取消' :
-          isOver ? '⚠ 到时了' : '涮煮中',
+          isOver ? '到时了' :
+          remaining > total * 0.4 ? '最佳口感' : '还差一点',
         statusClass:
           t.status === 'done' ? 'status-done' :
           t.status === 'cancelled' ? 'status-cancelled' :

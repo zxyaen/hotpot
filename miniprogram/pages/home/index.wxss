@@ -67,117 +67,179 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* 计时卡片 */
+/* ─── 计时卡片 ───────────────────────────────────────── */
 .timer-list {
   display: flex;
   flex-direction: column;
   gap: 20rpx;
   margin-top: 20rpx;
 }
+
+/* 基础卡片 */
 .timer-card {
   background: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+  border-radius: 20rpx;
+  padding: 28rpx 28rpx 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.07);
   border-left: 8rpx solid #27AE60;
   position: relative;
+  overflow: hidden;
 }
+
+/* 绿色：时间充裕 */
+.timer-card.urgency-safe {
+  border-left-color: #27AE60;
+}
+/* 黄色：快到时间 */
+.timer-card.urgency-warn {
+  border-left-color: #F39C12;
+  background: #FFFDF5;
+}
+/* 红色：到时了 */
 .timer-card.status-over {
   border-left-color: #E74C3C;
+  background: #FFF8F8;
   animation: shake 0.5s ease-in-out infinite;
-  background: #FFF5F5;
 }
+/* 已完成/已取消 */
 .timer-card.status-done,
 .timer-card.status-cancelled {
-  border-left-color: #BDC3C7;
-  opacity: 0.7;
+  border-left-color: #D0CFC9;
+  opacity: 0.65;
 }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4rpx); }
-  75% { transform: translateX(4rpx); }
+  25% { transform: translateX(-3rpx); }
+  75% { transform: translateX(3rpx); }
 }
 
-.timer-header {
+/* 顶部一行：食材信息 + 倒计时大字 */
+.timer-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
 }
 .timer-food {
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
 }
 .food-emoji {
-  font-size: 48rpx;
+  font-size: 56rpx;
   margin-right: 16rpx;
+  flex-shrink: 0;
+}
+.food-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  min-width: 0;
 }
 .food-name {
-  font-size: 32rpx;
-  font-weight: 600;
-}
-.food-meta {
-  font-size: 22rpx;
-  color: #7F8C8D;
-}
-.timer-status {
-  font-size: 22rpx;
-  padding: 6rpx 16rpx;
-  border-radius: 20rpx;
-  background: #E8F5E9;
-  color: #27AE60;
-}
-.timer-status.status-over {
-  background: #FFEBEE;
-  color: #E74C3C;
-  font-weight: 600;
-}
-.timer-status.status-done,
-.timer-status.status-cancelled {
-  background: #F5F5F5;
-  color: #95A5A6;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #2C3E50;
+  line-height: 1.2;
 }
 
-/* 倒计时大字 */
-.timer-countdown {
-  text-align: center;
-  font-size: 96rpx;
-  font-weight: 700;
-  color: #C0392B;
-  margin: 20rpx 0;
-  font-variant-numeric: tabular-nums;
-  font-family: 'DIN Alternate', monospace;
+/* 状态胶囊标签 */
+.status-tag {
+  display: inline-block;
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  width: fit-content;
+  /* 默认绿色 */
+  background: #E8F8F0;
+  color: #27AE60;
 }
-.timer-countdown.over {
+.status-tag.urgency-warn {
+  background: #FEF9E7;
+  color: #E67E22;
+}
+.status-tag.status-over {
+  background: #FDEDEC;
   color: #E74C3C;
-  font-size: 56rpx;
   animation: pulse 0.8s infinite;
 }
-.timer-countdown.done {
-  color: #27AE60;
-  font-size: 80rpx;
+.status-tag.status-done,
+.status-tag.status-cancelled {
+  background: #F2F3F4;
+  color: #95A5A6;
+  font-weight: 400;
 }
+
+/* 倒计时大字（右侧） */
+.timer-countdown {
+  font-size: 72rpx;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -2rpx;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  /* 默认绿色 */
+  color: #27AE60;
+}
+.timer-countdown.urgency-warn {
+  color: #F39C12;
+}
+.timer-countdown.status-over {
+  font-size: 56rpx;
+  color: #E74C3C;
+  animation: pulse 0.8s infinite;
+}
+.timer-countdown.status-done {
+  font-size: 56rpx;
+  color: #27AE60;
+}
+.timer-countdown.status-cancelled {
+  font-size: 56rpx;
+  color: #BDC3C7;
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.45; }
 }
 
 /* 进度条 */
 .progress-bar {
   width: 100%;
-  height: 8rpx;
-  background: #ECF0F1;
-  border-radius: 4rpx;
+  height: 10rpx;
+  background: #F0F0F0;
+  border-radius: 5rpx;
   overflow: hidden;
-  margin-bottom: 20rpx;
+  margin-bottom: 12rpx;
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #27AE60 0%, #F39C12 80%, #E74C3C 100%);
+  border-radius: 5rpx;
   transition: width 1s linear;
+  background: #27AE60;
 }
-.progress-fill.over {
+.progress-fill.urgency-warn {
+  background: linear-gradient(90deg, #27AE60, #F39C12);
+}
+.progress-fill.status-over {
   background: #E74C3C;
+}
+
+/* 时长元信息 */
+.timer-meta {
+  margin-bottom: 16rpx;
+}
+.meta-text {
+  font-size: 22rpx;
+  color: #95A5A6;
+}
+.meta-over {
+  font-size: 24rpx;
+  color: #E74C3C;
+  font-weight: 500;
 }
 
 /* 操作按钮 */
@@ -185,31 +247,32 @@
   display: flex;
   justify-content: flex-end;
   gap: 16rpx;
+  margin-top: 4rpx;
 }
 .btn-mini {
   font-size: 26rpx;
-  padding: 10rpx 28rpx;
-  border-radius: 24rpx;
+  padding: 12rpx 32rpx;
+  border-radius: 40rpx;
   border: none;
-  min-height: 56rpx;
+  min-height: 60rpx;
   line-height: 36rpx;
+  font-weight: 500;
 }
-.btn-mini::after {
-  border: none;
-}
+.btn-mini::after { border: none; }
 .btn-cancel {
   background: #F5F5F5;
-  color: #7F8C8D;
+  color: #95A5A6;
 }
 .btn-confirm {
-  background: #27AE60;
+  background: linear-gradient(135deg, #2ECC71, #27AE60);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 4rpx 12rpx rgba(39,174,96,0.35);
 }
 .btn-remove {
   background: #fff;
   color: #BDC3C7;
-  border: 2rpx solid #ECF0F1 !important;
+  border: 1.5rpx solid #E8E8E8 !important;
 }
 
 /* 空状态 */
