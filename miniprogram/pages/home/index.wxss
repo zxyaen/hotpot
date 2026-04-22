@@ -270,19 +270,31 @@
 
 .bottom-secondary {
   display: flex;
-  justify-content: space-around;
-  margin-top: 14rpx;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+  gap: 16rpx;
 }
 .link {
+  flex: 1;
+  text-align: center;
   font-size: 26rpx;
   color: #7F8C8D;
-  padding: 10rpx 20rpx;
+  background: rgba(255,255,255,0.85);
+  border: 1.5rpx solid #E0D5C8;
+  border-radius: 40rpx;
+  padding: 14rpx 0;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
 }
 .link.danger {
-  color: #E74C3C;
+  color: #C0392B;
+  background: rgba(192,57,43,0.06);
+  border-color: rgba(192,57,43,0.25);
 }
 .link.batch-link {
-  color: #C0392B;
+  color: #8B4513;
+  background: rgba(139,69,19,0.07);
+  border-color: rgba(139,69,19,0.2);
   font-weight: 500;
 }
 
